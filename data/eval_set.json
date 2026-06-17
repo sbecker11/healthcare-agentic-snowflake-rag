@@ -1,0 +1,76 @@
+{
+  "examples": [
+    {
+      "id": "eval-1",
+      "question": "What time is check-out and can I get a late check-out?",
+      "relevant_ids": ["policy-checkin"],
+      "must_include": ["11:00 AM"]
+    },
+    {
+      "id": "eval-2",
+      "question": "Can I cancel my non-refundable booking?",
+      "relevant_ids": ["policy-cancellation"],
+      "must_include": ["non-refundable", "cannot"]
+    },
+    {
+      "id": "eval-3",
+      "question": "Are dogs allowed and is there a fee?",
+      "relevant_ids": ["policy-pets"],
+      "must_include": ["75"]
+    },
+    {
+      "id": "eval-4",
+      "question": "How much does valet parking cost per night?",
+      "relevant_ids": ["amenity-parking"],
+      "must_include": ["45"]
+    },
+    {
+      "id": "eval-5",
+      "question": "Is breakfast free for loyalty members?",
+      "relevant_ids": ["amenity-breakfast", "loyalty-tiers"],
+      "must_include": ["complimentary"]
+    },
+    {
+      "id": "eval-6",
+      "question": "How many points do I need for a free night?",
+      "relevant_ids": ["loyalty-redemption"],
+      "must_include": ["15,000"]
+    },
+    {
+      "id": "eval-7",
+      "question": "What are the pool hours?",
+      "relevant_ids": ["amenity-pool"],
+      "must_include": ["6:00 AM", "10:00 PM"]
+    },
+    {
+      "id": "eval-8",
+      "question": "Do you have EV charging?",
+      "relevant_ids": ["amenity-parking"],
+      "must_include": ["charging"]
+    },
+    {
+      "id": "eval-9",
+      "question": "How do I book a spa massage and is there a discount?",
+      "relevant_ids": ["service-spa"],
+      "must_include": ["24 hours", "15 percent"]
+    },
+    {
+      "id": "eval-10",
+      "question": "Where should I eat near the hotel for seafood?",
+      "relevant_ids": ["local-dining"],
+      "must_include": ["Harbor Oyster Bar"]
+    },
+    {
+      "id": "eval-11",
+      "question": "What perks does Platinum loyalty status give me?",
+      "relevant_ids": ["loyalty-tiers"],
+      "must_include": ["lounge"]
+    },
+    {
+      "id": "eval-12",
+      "question": "Is wifi free or do I pay extra for fast streaming?",
+      "relevant_ids": ["amenity-wifi"],
+      "must_include": ["12"]
+    }
+  ]
+}

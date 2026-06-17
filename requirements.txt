@@ -1,0 +1,25 @@
+# Core orchestration
+langgraph>=1.0
+langgraph-checkpoint-sqlite>=2.0
+langchain-core>=1.0
+
+# LLM (optional at runtime; offline mock used when ANTHROPIC_API_KEY is unset)
+langchain-anthropic>=1.0
+
+# Retrieval + numerics
+scikit-learn>=1.4
+numpy>=1.26
+pydantic>=2.0
+
+# MLOps
+mlflow>=3.0
+optuna>=4.0
+
+# Dev
+pytest>=8.0
+
+# --- Optional: Snowflake Cortex Search production retrieval path ---
+# Uncomment to enable the CortexRetriever adapter. Not required to run the
+# repo, tests, or the sweep (the local TF-IDF retriever is the default).
+# snowflake-snowpark-python>=1.20
+# snowflake>=0.8

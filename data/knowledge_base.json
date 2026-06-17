@@ -1,0 +1,76 @@
+{
+  "documents": [
+    {
+      "id": "policy-checkin",
+      "title": "Check-in and Check-out Policy",
+      "category": "policy",
+      "text": "Standard check-in begins at 3:00 PM and check-out is at 11:00 AM. Early check-in and late check-out are subject to availability. Aurelian Elite and Platinum loyalty members receive guaranteed 4:00 PM late check-out at no charge. A valid government-issued photo ID and the credit card used for booking are required at check-in."
+    },
+    {
+      "id": "policy-cancellation",
+      "title": "Cancellation and Modification Policy",
+      "category": "policy",
+      "text": "Flexible-rate reservations may be cancelled free of charge up to 48 hours before arrival. Advance-purchase and non-refundable rates are charged in full at booking and cannot be cancelled or modified. Cancellations within 48 hours of arrival incur a one-night room-and-tax charge. Loyalty members can modify dates once without penalty on flexible rates."
+    },
+    {
+      "id": "policy-pets",
+      "title": "Pet Policy",
+      "category": "policy",
+      "text": "We are a pet-friendly hotel. Up to two dogs per room are welcome with a non-refundable cleaning fee of 75 USD per stay. Dogs must weigh under 50 pounds and may not be left unattended in guest rooms. Service animals are always welcome at no charge and are exempt from weight and quantity limits. Cats are accommodated on request."
+    },
+    {
+      "id": "amenity-wifi",
+      "title": "Internet and Connectivity",
+      "category": "amenity",
+      "text": "Complimentary high-speed Wi-Fi is available throughout the property for all guests. Premium streaming-grade bandwidth is included free for loyalty members and is available to other guests for 12 USD per day. Wired connections are available in meeting rooms on request."
+    },
+    {
+      "id": "amenity-pool",
+      "title": "Pool and Fitness Center",
+      "category": "amenity",
+      "text": "The rooftop infinity pool is open daily from 6:00 AM to 10:00 PM. The 24-hour fitness center offers Peloton bikes, free weights, and a Mirror studio. Poolside cabanas can be reserved for 90 USD per half-day through the concierge. Children under 16 must be accompanied by an adult at the pool."
+    },
+    {
+      "id": "amenity-breakfast",
+      "title": "Dining and Breakfast",
+      "category": "amenity",
+      "text": "The Atrium restaurant serves breakfast from 6:30 AM to 10:30 AM and dinner from 5:00 PM to 10:00 PM. A daily breakfast buffet is 28 USD per adult and complimentary for Elite and Platinum loyalty members. In-room dining is available 24 hours. Dietary accommodations including vegan, gluten-free, halal, and kosher are available with advance notice."
+    },
+    {
+      "id": "amenity-parking",
+      "title": "Parking and Transportation",
+      "category": "amenity",
+      "text": "Valet parking is 45 USD per night with unlimited in-and-out privileges. Self-parking is 32 USD per night. Electric-vehicle charging stations are available in the garage at no additional cost. A complimentary scheduled shuttle serves the airport and downtown core between 6:00 AM and 11:00 PM."
+    },
+    {
+      "id": "loyalty-tiers",
+      "title": "Aurelian Rewards Loyalty Program",
+      "category": "loyalty",
+      "text": "The Aurelian Rewards program has three tiers: Member, Elite (after 25 nights per year), and Platinum (after 60 nights per year). Members earn 10 points per dollar spent. Elite members receive room upgrades when available, free breakfast, and late check-out. Platinum members additionally receive guaranteed lounge access, a welcome amenity, and a 50 percent points bonus."
+    },
+    {
+      "id": "loyalty-redemption",
+      "title": "Points Redemption",
+      "category": "loyalty",
+      "text": "Points can be redeemed for free nights starting at 15,000 points for a standard room in off-peak season. Points never expire as long as the account has activity within 24 months. Points can also be transferred to airline partners at a 3-to-1 ratio or used for spa and dining credits at a rate of 100 points per dollar."
+    },
+    {
+      "id": "service-spa",
+      "title": "Spa and Wellness",
+      "category": "service",
+      "text": "The Lumen Spa is open daily from 9:00 AM to 8:00 PM and offers massages, facials, and hydrotherapy. Treatments should be booked at least 24 hours in advance through the concierge or the in-room tablet. Loyalty members receive 15 percent off all spa services. A 24-hour cancellation policy applies to all spa bookings."
+    },
+    {
+      "id": "service-business",
+      "title": "Business and Event Services",
+      "category": "service",
+      "text": "The business center is open 24 hours with printing, scanning, and private workstations. Six meeting rooms accommodate 8 to 200 guests and include AV equipment and videoconferencing. A dedicated events team can arrange catering, room blocks, and group rates for ten or more rooms. Day-use meeting packages start at 65 USD per person."
+    },
+    {
+      "id": "local-dining",
+      "title": "Local Dining Recommendations",
+      "category": "local",
+      "text": "Within walking distance, the concierge recommends Cento for handmade pasta, Saffron House for modern Indian, and the Harbor Oyster Bar for seafood. Reservations are recommended on weekends and the concierge can arrange them. A vibrant night market with street food runs Thursday through Sunday three blocks east of the hotel."
+    }
+  ]
+}
