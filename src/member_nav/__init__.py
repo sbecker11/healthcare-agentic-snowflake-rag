@@ -1,4 +1,4 @@
-"""Concierge: an agentic-RAG system on LangGraph with an MLOps + HPO lifecycle."""
+"""Member Nav: agentic RAG for health-plan member navigation on LangGraph + MLOps."""
 from .config import RagConfig, SEARCH_SPACE
 from .knowledge import (
     TfidfRetriever,
@@ -9,11 +9,11 @@ from .knowledge import (
 )
 from .llm import LLM
 from .graph import build_graph, run_once
-from .state import ConciergeState
+from .state import MemberNavState
 
 __all__ = [
     "RagConfig", "SEARCH_SPACE", "TfidfRetriever", "CortexRetriever",
     "Retriever", "RetrievedDoc", "load_documents", "LLM", "build_graph",
-    "run_once", "ConciergeState",
+    "run_once", "MemberNavState",
 ]
-__version__ = "0.1.0"
+__version__ = "0.2.0"

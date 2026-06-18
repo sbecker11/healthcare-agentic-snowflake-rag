@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "concierge-langgraph-mlops"
-version = "0.1.0"
-description = "Agentic-RAG hospitality concierge on LangGraph with an MLOps + hyperparameter-optimization lifecycle"
+name = "healthcare-agentic-snowflake-rag"
+version = "0.2.0"
+description = "Agentic RAG for health-plan member navigation on LangGraph with Snowflake Cortex, medallion semantic assets, and an MLOps lifecycle"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Shawn Becker", email = "shawn.becker@spexture.com" }]

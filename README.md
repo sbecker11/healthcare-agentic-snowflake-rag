@@ -1,19 +1,17 @@
-# Concierge — Agentic RAG on LangGraph with an MLOps + HPO Lifecycle
+# Member Nav — Agentic RAG on LangGraph with Snowflake Cortex + MLOps
 
-A production-shaped reference implementation of an **agentic retrieval‑augmented
-generation** system for a hospitality concierge, built on **LangGraph**, wrapped
-in a full **MLOps lifecycle**: experiment tracking (MLflow), hyperparameter
-optimization (Optuna TPE), an evaluation/promotion gate, a versioned config
-registry, and production drift monitoring (PSI).
+A production-shaped portfolio project for **agentic AI engineering on
+Snowflake**: medallion-architecture semantic data assets (bronze → silver →
+gold), **Cortex Search** for hybrid retrieval, **semantic views** for trusted
+analytics, and a **LangGraph** member-navigation agent with a full **MLOps
+lifecycle** (MLflow, Optuna HPO, promotion gate, PSI drift monitoring).
 
-The retrieval layer is pluggable: a local TF‑IDF retriever (default, runs
-anywhere) and a **Snowflake Cortex Search** adapter for the managed,
-hybrid‑search production path.
+The domain is **health-plan member benefits navigation** (coverage, copays,
+prior auth, telehealth, pharmacy) using **synthetic data only** — no real PHI.
 
-> Runs end‑to‑end with **zero credentials**. When `ANTHROPIC_API_KEY` is unset,
-> the reasoning nodes use a deterministic offline mock, so tests, the eval gate,
-> and the HPO sweep all execute offline and reproducibly. Set the key to route
-> the same graph through Claude.
+> **For role alignment:** see
+> [docs/agentic-ai-engineering-primer.md](docs/agentic-ai-engineering-primer.md)
+> for a Cambria Health Agentic AI Engineer requirements matrix.
 
 ```
 14 passed in tests/  •  TF-IDF default retriever  •  Cortex Search production adapter
@@ -39,11 +37,50 @@ Two things separate this from a "RAG demo":
 
 ---
 
+## Snowflake medallion + semantic layer
+
+```mermaid
+flowchart LR
+    subgraph BRONZE["Bronze"]
+        RAW["RAW_POLICY_FEED"]
+    end
+    subgraph SILVER["Silver"]
+        BP["BENEFIT_POLICY"]
+    end
+    subgraph GOLD["Gold"]
+        KB["MEMBER_KB"]
+        PCS["PLAN_COST_SHARING"]
+    end
+    subgraph SEM["Semantic"]
+        SV["MEMBER_COST_SHARING"]
+    end
+    subgraph CORTEX["Cortex Search"]
+        CS["MEMBER_KB_SEARCH"]
+    end
+
+    RAW --> BP --> KB --> CS
+    PCS --> SV
+```
+
+DDL ships in `snowflake/` (deploy in order — see
+[snowflake/README.md](snowflake/README.md)):
+
+| Script | Layer |
+|--------|-------|
+| `01_bronze.sql` | Raw policy feeds |
+| `02_silver.sql` | Cleansed `BENEFIT_POLICY` |
+| `03_gold.sql` | `MEMBER_KB` + `PLAN_COST_SHARING` |
+| `04_semantic_views.sql` | Semantic views for copay analytics |
+| `05_cortex_search.sql` | `MEMBER_KB_SEARCH` hybrid search |
+| `06_governance.sql` | Roles, masking, row access policies |
+
+---
+
 ## The agentic‑RAG workflow
 
 ```mermaid
 flowchart TD
-    START([Guest question]) --> R[retrieve]
+    START([Member question]) --> R[retrieve]
     R --> GR{grade_retrieval}
     GR -- "retrieval_ok" --> G[generate]
     GR -- "weak and budget left" --> RW[rewrite_query]
@@ -59,51 +96,15 @@ flowchart TD
     class GR,GA decision;
 ```
 
-**The two cycles are the point.** `rewrite_query → retrieve` is the retrieval
-self‑correction loop; `grade_answer → generate` is the regeneration loop. Each is
-capped by a hyperparameter (`max_rewrites`, `max_regenerations`) so the agent
-can iterate without ever looping forever.
-
 A real trace (offline mock), showing a clean single pass:
 
 ```
-Q: Are dogs allowed and is there a fee?
-   . retrieve(query='Are dogs allowed and is there a fee?') -> 3 docs, top_score=0.237
-   . grade_retrieval -> ok=True (score=0.237 thr=0.1, overlap=0.625 min=0.04)
-   . generate -> 188 chars
+Q: Do I need prior authorization for an MRI?
+   . retrieve(query='Do I need prior authorization for an MRI?') -> 3 docs, top_score=0.241
+   . grade_retrieval -> ok=True (score=0.241 thr=0.1, overlap=0.667 min=0.04)
+   . generate -> 195 chars
    . grade_answer -> ok=True (grounded=True, fallback=False)
-A: Up to two dogs per room are welcome with a non-refundable cleaning fee of 75 USD per stay...
-```
-
-And the loop firing under strict grading (budget = 2 rewrites, then proceeds):
-
-```
-   . retrieve(query='dog fee') -> top_score=0.125
-   . grade_retrieval -> ok=False
-   . rewrite_query -> 'dog fee pet policy fee'
-   . retrieve(query='dog fee pet policy fee') -> top_score=0.262
-   . grade_retrieval -> ok=False
-   . rewrite_query -> 'dog fee pet policy fee'
-   . retrieve -> ... -> grade_retrieval -> ok=False
-   . generate   (rewrite budget spent; best-effort answer)
-```
-
----
-
-## State, nodes, and durable persistence
-
-LangGraph state is a typed `TypedDict` whose fields carry **reducers** that
-define how each node's updates merge. Getting reducers right is the single most
-common source of LangGraph production incidents, so they're explicit here:
-`retrieved` accumulates across rewrite iterations (`operator.add`), while scalar
-fields overwrite (last‑write‑wins).
-
-Every run is checkpointed through a **SqliteSaver**, so a thread can pause and
-resume and its full state history is recoverable from disk:
-
-```
-Persisted thread 'guest-1138': 6 checkpoints saved
-Steps executed: 4; state recoverable from disk at checkpoints.sqlite
+A: Certain services require prior authorization before care is rendered. These include ...
 ```
 
 ---
@@ -117,14 +118,14 @@ with semantic reranking — without changing a line of graph code.
 
 ```mermaid
 flowchart LR
-    subgraph APP["Concierge app (LangGraph)"]
+    subgraph APP["Member Nav app (LangGraph)"]
         GNODE["retrieve node"] --> PROTO{{"Retriever protocol"}}
         PROTO -. "default / offline" .-> TFIDF["TfidfRetriever<br/>(scikit-learn cosine)"]
         PROTO == "production" ==> CORTEX["CortexRetriever<br/>adapter"]
     end
 
     subgraph SNOW["Snowflake account"]
-        KB[("KNOWLEDGE_BASE<br/>table")] --> SVC["CORTEX SEARCH SERVICE<br/>CONCIERGE_KB_SEARCH"]
+        KB[("GOLD.MEMBER_KB")] --> SVC["CORTEX SEARCH<br/>MEMBER_KB_SEARCH"]
         SVC --> EMB["Arctic-Embed<br/>(managed embeddings)"]
         SVC --> HYB["Hybrid retrieval:<br/>vector + keyword + rerank"]
     end
@@ -139,39 +140,46 @@ flowchart LR
     class KB,SVC,EMB,HYB snow;
 ```
 
-**What Cortex handles for you:** embedding (Snowflake‑managed `arctic-embed`, or
-bring your own pre‑computed vectors), indexing, hybrid retrieval, and semantic
-reranking — all inside the Snowflake governance perimeter, no external vector DB
-or ETL. The adapter normalizes the reranked rows into the same `RetrievedDoc`
-shape the graph already consumes, so the grader's threshold logic stays
-backend‑neutral.
-
-Provision the service once (DDL ships in `knowledge.py` as `CORTEX_SEARCH_DDL`):
+Provision Cortex Search (full pipeline in `snowflake/05_cortex_search.sql`):
 
 ```sql
-CREATE OR REPLACE CORTEX SEARCH SERVICE AI.CONCIERGE.CONCIERGE_KB_SEARCH
+CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_NAV.MEMBER_KB_SEARCH
     ON text
     ATTRIBUTES id, title, category
     WAREHOUSE = COMPUTE_WH
     TARGET_LAG = '1 hour'
     EMBEDDING_MODEL = 'snowflake-arctic-embed-l-v2.0'
-    AS (SELECT id, title, category, text FROM AI.CONCIERGE.KNOWLEDGE_BASE);
+    AS (SELECT id, title, category, text FROM AI.GOLD.MEMBER_KB WHERE is_active = TRUE);
 ```
 
 then point the graph at it:
 
 ```python
 from snowflake.snowpark import Session
-from concierge import CortexRetriever, build_graph, RagConfig
+from member_nav import CortexRetriever, build_graph, RagConfig
 
 session = Session.builder.configs(conn_params).create()
-retriever = CortexRetriever(session, service_name="CONCIERGE_KB_SEARCH")
+retriever = CortexRetriever(session, service_name="MEMBER_KB_SEARCH")
 app = build_graph(RagConfig(), retriever)   # same graph, managed retrieval
 ```
 
-> **Scope note.** Cortex is included as a real, runnable production path to
-> demonstrate managed hybrid search; the local TF‑IDF retriever remains the
-> default so the repo needs no Snowflake account to run, test, or tune.
+> Runs end‑to‑end with **zero credentials**. When `ANTHROPIC_API_KEY` is unset,
+> the reasoning nodes use a deterministic offline mock, so tests, the eval gate,
+> and the HPO sweep all execute offline and reproducibly. Set the key to route
+> the same graph through Claude.
+
+---
+
+## State, nodes, and durable persistence
+
+LangGraph state is a typed `TypedDict` whose fields carry **reducers** that
+define how each node's updates merge. Getting reducers right is the single most
+common source of LangGraph production incidents, so they're explicit here:
+`retrieved` accumulates across rewrite iterations (`operator.add`), while scalar
+fields overwrite (last‑write‑wins).
+
+Every run is checkpointed through a **SqliteSaver**, so a thread can pause and
+resume and its full state history is recoverable from disk.
 
 ---
 
@@ -197,41 +205,16 @@ flowchart TD
     class GATE store;
 ```
 
-**Does training search over hyperparameters?** Strictly, no — the inner loop fits
-nothing but produces answers at a *fixed* config. The **outer loop** (this
-diagram) searches the config space: each TPE trial runs the full graph over the
-eval set, logs params + metrics to MLflow, and returns the composite for the
-sampler to optimize. TPE (a tree‑structured Parzen estimator) models the
-validation surface and proposes promising configs — smarter than grid or random.
-
 After the sweep, the best config is **registered** (Staging) and run through the
 **promotion gate**: it must clear absolute floors (recall ≥ 0.75, accuracy ≥
-0.50) *and* beat the incumbent's composite before it's promoted to Production —
-the MLOps analog of a CI gate, except it gates on model metrics, not unit tests.
-
-Sample sweep output:
-
-```
-Running 20-trial TPE sweep (tracking backend: mlflow)...
-Best composite : 0.9167   (recall@k 1.0, answer acc 0.8333)
-Best config    : {'top_k': 3, 'relevance_threshold': 0.286, 'max_rewrites': 2, ...}
-Registered     : v1
-Promotion gate : PROMOTED (no incumbent; candidate clears floors)
-```
+0.50) *and* beat the incumbent's composite before it's promoted to Production.
 
 ### Production monitoring (drift)
 
-The one axis ordinary software has no analog for: quality can decay with zero
-code changes because the input distribution shifts. We monitor the distribution
-of retrieval top‑scores with the **Population Stability Index** (quantile‑binned,
-the standard formulation):
+Retrieval top‑score distributions are monitored with **Population Stability
+Index** (PSI):
 
 ```
-week  mean_shift       psi  severity
-   1        0.00     0.038  stable
-   2        0.01     0.102  moderate
-   3        0.03     0.533  significant  <-- ALERT: refresh index / retrain
-   ...
 PSI bands: <0.10 stable | 0.10-0.25 moderate | >0.25 significant
 ```
 
@@ -270,10 +253,12 @@ pytest -q
 ## Project structure
 
 ```
-src/concierge/
+snowflake/               Medallion DDL, semantic views, Cortex, governance
+docs/                    agentic-ai-engineering-primer.md (role alignment)
+src/member_nav/
 ├── config.py            RagConfig dataclass + SEARCH_SPACE (the tunable surface)
 ├── llm.py               Claude client w/ deterministic offline mock fallback
-├── knowledge.py         Retriever protocol + TfidfRetriever + CortexRetriever + DDL
+├── knowledge.py         Retriever protocol + TfidfRetriever + CortexRetriever
 ├── state.py             Typed LangGraph state with explicit reducers
 ├── graph.py             The agentic-RAG graph (cyclic, conditional edges)
 └── mlops/
@@ -284,7 +269,7 @@ src/concierge/
     └── tuning.py        Optuna TPE sweep → tracking → gate → registry
 
 scripts/   demo.py · run_sweep.py · run_eval.py · run_monitoring.py
-data/      knowledge_base.json (hospitality KB) · eval_set.json (ground truth)
+data/      knowledge_base.json (synthetic member KB) · eval_set.json (ground truth)
 tests/     test_pipeline.py (14 tests, offline)
 ```
 
@@ -292,31 +277,28 @@ tests/     test_pipeline.py (14 tests, offline)
 
 ## Design notes
 
-- **Backend‑neutral retrieval.** The graph depends only on the `Retriever`
-  protocol; TF‑IDF ↔ Cortex Search ↔ pgvector/OpenSearch are one‑line swaps.
-- **Offline‑first.** A deterministic mock LLM keeps the whole pipeline
-  reproducible in CI without an API key; the architecture is identical online.
-- **Explicit reducers.** State merge semantics are written out, not implicit.
-- **Gated promotion.** No config reaches Production without clearing floors and
-  beating the incumbent on held‑out metrics.
-- **Tunable, not hand‑set.** The hyperparameter surface lives in one
-  version‑controlled place and is searched, logged, and audited.
+- **Medallion → Cortex → agent.** Bronze/silver/gold SQL feeds gold `MEMBER_KB`;
+  Cortex Search indexes it; the LangGraph agent consumes via `CortexRetriever`.
+- **Backend‑neutral retrieval.** TF‑IDF ↔ Cortex Search are one-line swaps.
+- **Offline‑first.** Deterministic mock LLM keeps CI reproducible without API keys.
+- **Gated promotion.** No config reaches Production without clearing metric floors.
+- **Governed access.** Illustrative roles, masking, and row policies in `06_governance.sql`.
 
 ---
 
-### Production swaps (what changes for a real deployment)
+### Production swaps
 
 | Concern            | This repo (runs anywhere) | Production path                         |
 |--------------------|---------------------------|-----------------------------------------|
-| Retrieval          | TF‑IDF cosine             | Snowflake Cortex Search / pgvector / OpenSearch |
+| Retrieval          | TF‑IDF cosine             | Snowflake Cortex Search                 |
 | Reasoning LLM      | Offline mock / Claude     | Claude via `ANTHROPIC_API_KEY`          |
 | Experiment store   | Local SQLite MLflow       | MLflow Tracking Server / Databricks     |
 | Checkpointer       | SqliteSaver               | Postgres checkpointer                   |
-| Drift monitoring   | Offline PSI script        | Scheduled job → alerting (Evidently / CloudWatch) |
+| Drift monitoring   | Offline PSI script        | Scheduled job → alerting                |
 
 ---
 
-*Built by Shawn Becker · Spexture (Independent Consulting) · as a reference for
-agentic‑RAG + MLOps patterns. The hospitality concierge domain and the Cortex
-integration are illustrative; the LangGraph control flow, HPO loop, and
-promotion gate are the transferable core.*
+*Built by Shawn Becker · Spexture (Independent Consulting) · Portfolio reference
+for agentic AI engineering on Snowflake. Synthetic health-plan data only; the
+LangGraph control flow, medallion semantic assets, Cortex integration, HPO loop,
+and promotion gate are the transferable core.*

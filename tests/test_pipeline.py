@@ -1,4 +1,4 @@
-"""Test suite for the Concierge agentic-RAG + MLOps pipeline.
+"""Test suite for the Member Nav agentic-RAG + MLOps pipeline.
 
 Runs fully offline (deterministic mock LLM, TF-IDF retriever). Exercises the
 graph's cyclic control flow, the eval gate, drift detection, the registry's
@@ -14,9 +14,9 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from concierge import RagConfig, TfidfRetriever, load_documents, run_once, build_graph, LLM
-from concierge.knowledge import RetrievedDoc, Retriever
-from concierge.mlops import (
+from member_nav import RagConfig, TfidfRetriever, load_documents, run_once, build_graph, LLM
+from member_nav.knowledge import RetrievedDoc, Retriever
+from member_nav.mlops import (
     evaluate, load_eval_set, passes_gate, EvalResult,
     population_stability_index, ConfigRegistry, run_sweep, Tracker,
 )
@@ -40,7 +40,7 @@ def eval_set():
 # --- retriever -------------------------------------------------------------
 
 def test_retriever_returns_top_k(retriever):
-    out = retriever.search("late check-out time", top_k=3)
+    out = retriever.search("open enrollment dates", top_k=3)
     assert len(out) == 3
     assert all(isinstance(d, RetrievedDoc) for d in out)
     # scores are sorted descending
@@ -48,8 +48,8 @@ def test_retriever_returns_top_k(retriever):
 
 
 def test_retriever_is_relevant(retriever):
-    out = retriever.search("are dogs allowed", top_k=1)
-    assert out[0].id == "policy-pets"
+    out = retriever.search("prior authorization MRI", top_k=1)
+    assert out[0].id == "policy-prior-auth"
 
 
 def test_retriever_satisfies_protocol(retriever):
@@ -59,7 +59,7 @@ def test_retriever_satisfies_protocol(retriever):
 # --- graph -----------------------------------------------------------------
 
 def test_graph_runs_and_answers(retriever):
-    state = run_once("What time is check-out?", RagConfig(), retriever)
+    state = run_once("When is open enrollment?", RagConfig(), retriever)
     assert state["answer"]
     assert state["answer_ok"] is True
     assert state["context_docs"]
@@ -68,7 +68,7 @@ def test_graph_runs_and_answers(retriever):
 def test_rewrite_loop_is_bounded(retriever):
     # Impossibly strict grading forces rewrites; loop must respect the budget.
     cfg = RagConfig(relevance_threshold=0.99, min_keyword_overlap=0.99, max_rewrites=2)
-    state = run_once("dog fee", cfg, retriever)
+    state = run_once("parking fee nightly", cfg, retriever)
     assert state["rewrite_count"] == 2  # exactly the budget, no infinite loop
     # retrieve runs max_rewrites + 1 times
     retrieves = [t for t in state["trace"] if t.startswith("retrieve(")]
@@ -76,7 +76,7 @@ def test_rewrite_loop_is_bounded(retriever):
 
 
 def test_no_rewrite_when_retrieval_is_good(retriever):
-    state = run_once("How much is valet parking?", RagConfig(), retriever)
+    state = run_once("What is the emergency room copay?", RagConfig(), retriever)
     assert state.get("rewrite_count", 0) == 0
 
 

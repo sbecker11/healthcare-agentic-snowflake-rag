@@ -11,8 +11,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from concierge import RagConfig, TfidfRetriever, load_documents, build_graph, LLM
-from concierge.state import ConciergeState
+from member_nav import RagConfig, TfidfRetriever, load_documents, build_graph, LLM
+from member_nav.state import MemberNavState
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -30,15 +30,15 @@ def main() -> None:
     print(f"LLM mode: {'CLAUDE (online)' if llm.online else 'deterministic mock (offline)'}")
 
     questions = [
-        "What time is check-out and can I get a late check-out?",
-        "Are dogs allowed and is there a fee?",
-        "How many points do I need for a free night?",
+        "When is open enrollment and when do plan changes take effect?",
+        "Do I need prior authorization for an MRI?",
+        "What is the copay for a specialist visit?",
     ]
 
     banner("AGENTIC-RAG TRACES")
     app = build_graph(config, retriever, llm)
     for q in questions:
-        init: ConciergeState = {
+        init: MemberNavState = {
             "question": q, "query": q, "retrieved": [],
             "rewrite_count": 0, "regen_count": 0, "trace": [],
         }
@@ -58,14 +58,14 @@ def main() -> None:
     db = ROOT / "checkpoints.sqlite"
     # Allow our Pydantic RetrievedDoc to round-trip through the checkpoint store.
     serde = JsonPlusSerializer(
-        allowed_msgpack_modules=[("concierge.knowledge", "RetrievedDoc")]
+        allowed_msgpack_modules=[("member_nav.knowledge", "RetrievedDoc")]
     )
     conn = sqlite3.connect(str(db), check_same_thread=False)
     try:
         cp = SqliteSaver(conn, serde=serde)
         durable = build_graph(config, retriever, llm, checkpointer=cp)
-        thread = {"configurable": {"thread_id": "guest-1138"}}
-        q = "How do I book a spa massage and is there a discount?"
+        thread = {"configurable": {"thread_id": "member-1138"}}
+        q = "What is the phone number for the 24/7 nurse advice line?"
         init = {"question": q, "query": q, "retrieved": [],
                 "rewrite_count": 0, "regen_count": 0, "trace": []}
         result = durable.invoke(init, config=thread)
@@ -74,7 +74,7 @@ def main() -> None:
         # The run is now persisted; we can reload its state from the store.
         snapshot = durable.get_state(thread)
         n_checkpoints = len(list(durable.get_state_history(thread)))
-        print(f"\nPersisted thread 'guest-1138': {n_checkpoints} checkpoints saved")
+        print(f"\nPersisted thread 'member-1138': {n_checkpoints} checkpoints saved")
         print(f"Steps executed: {snapshot.metadata.get('step')}; "
               f"state recoverable from disk at {db.name}")
     finally:

@@ -35,9 +35,9 @@ class LLM:
     def rewrite_query(self, query: str, weak_context: str) -> str:
         """Produce a re-phrased retrieval query when the first pass was weak."""
         prompt = (
-            "You are improving a search query for a hotel knowledge base. "
-            "The previous query retrieved weak results. Rewrite it to be more "
-            "specific and keyword-rich. Return ONLY the rewritten query.\n\n"
+            "You are improving a search query for a health-plan member benefits "
+            "knowledge base. The previous query retrieved weak results. Rewrite it "
+            "to be more specific and keyword-rich. Return ONLY the rewritten query.\n\n"
             f"Original query: {query}\n"
             f"Weak context found: {weak_context[:300]}"
         )
@@ -50,13 +50,13 @@ class LLM:
         style = (
             "Answer concisely in one or two sentences."
             if prompt_version == "v1"
-            else "Answer warmly as a concierge, citing the specific policy detail."
+            else "Answer clearly as a member services advocate, citing the specific benefit or policy detail."
         )
         prompt = (
-            "You are a hotel concierge assistant. Answer the guest's question "
-            f"using ONLY the context below. {style} If the context does not "
-            "contain the answer, say you will check with the front desk.\n\n"
-            f"Context:\n{context}\n\nGuest question: {query}\n\nAnswer:"
+            "You are a health-plan member navigation assistant. Answer the member's "
+            f"question using ONLY the context below. {style} If the context does not "
+            "contain the answer, say you will connect them with member services.\n\n"
+            f"Context:\n{context}\n\nMember question: {query}\n\nAnswer:"
         )
         if self.online:
             return self._chat(prompt).strip()
@@ -74,16 +74,22 @@ class LLM:
         ql = query.lower()
         hints = []
         for kw, expand in [
-            ("late", "check-out time policy"),
-            ("dog", "pet policy fee"),
-            ("park", "valet self-parking nightly rate"),
-            ("point", "loyalty rewards redemption"),
-            ("spa", "massage booking discount"),
-            ("wifi", "internet streaming bandwidth fee"),
+            ("enroll", "open enrollment plan change dates"),
+            ("prior auth", "prior authorization MRI requirements"),
+            ("specialist", "specialist copay cost sharing"),
+            ("copay", "copay deductible cost sharing"),
+            ("telehealth", "virtual care visit cost"),
+            ("pharmacy", "formulary tier generic copay"),
+            ("therapy", "mental health outpatient visits"),
+            ("preventive", "preventive care no copay"),
+            ("nurse", "nurse advice line phone"),
+            ("portal", "member portal registration"),
+            ("hmo", "referral primary care specialist"),
+            ("emergency", "emergency room copay"),
         ]:
             if kw in ql:
                 hints.append(expand)
-        suffix = (" " + " ".join(hints)) if hints else " hotel policy details"
+        suffix = (" " + " ".join(hints)) if hints else " member benefits policy"
         return (query + suffix).strip()
 
     @staticmethod
@@ -95,7 +101,7 @@ class LLM:
         call produces far better prose; the architecture is unchanged.
         """
         if not context.strip():
-            return "I'll check with the front desk and follow up shortly."
+            return "I'll connect you with member services for a detailed answer."
         q_terms = set(re.findall(r"[a-z0-9]+", query.lower()))
         sentences = re.split(r"(?<=[.!?])\s+", context.replace("\n", " "))
         scored = []

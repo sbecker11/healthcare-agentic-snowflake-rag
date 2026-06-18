@@ -2,75 +2,75 @@
   "examples": [
     {
       "id": "eval-1",
-      "question": "What time is check-out and can I get a late check-out?",
-      "relevant_ids": ["policy-checkin"],
-      "must_include": ["11:00 AM"]
+      "question": "When is open enrollment and when do plan changes take effect?",
+      "relevant_ids": ["policy-enrollment"],
+      "must_include": ["November 1", "January 15"]
     },
     {
       "id": "eval-2",
-      "question": "Can I cancel my non-refundable booking?",
-      "relevant_ids": ["policy-cancellation"],
-      "must_include": ["non-refundable", "cannot"]
+      "question": "Do I need prior authorization for an MRI?",
+      "relevant_ids": ["policy-prior-auth"],
+      "must_include": ["prior authorization", "MRI"]
     },
     {
       "id": "eval-3",
-      "question": "Are dogs allowed and is there a fee?",
-      "relevant_ids": ["policy-pets"],
-      "must_include": ["75"]
+      "question": "What is the copay for a specialist visit?",
+      "relevant_ids": ["policy-copay", "plan-ppo"],
+      "must_include": ["50"]
     },
     {
       "id": "eval-4",
-      "question": "How much does valet parking cost per night?",
-      "relevant_ids": ["amenity-parking"],
-      "must_include": ["45"]
+      "question": "How much does a telehealth primary care visit cost?",
+      "relevant_ids": ["benefit-telehealth", "policy-copay"],
+      "must_include": ["15"]
     },
     {
       "id": "eval-5",
-      "question": "Is breakfast free for loyalty members?",
-      "relevant_ids": ["amenity-breakfast", "loyalty-tiers"],
-      "must_include": ["complimentary"]
+      "question": "Is preventive care covered with no copay?",
+      "relevant_ids": ["benefit-preventive"],
+      "must_include": ["100 percent"]
     },
     {
       "id": "eval-6",
-      "question": "How many points do I need for a free night?",
-      "relevant_ids": ["loyalty-redemption"],
-      "must_include": ["15,000"]
+      "question": "What is the copay for tier 1 generic drugs?",
+      "relevant_ids": ["benefit-pharmacy"],
+      "must_include": ["10"]
     },
     {
       "id": "eval-7",
-      "question": "What are the pool hours?",
-      "relevant_ids": ["amenity-pool"],
-      "must_include": ["6:00 AM", "10:00 PM"]
+      "question": "How many outpatient therapy visits are covered per year?",
+      "relevant_ids": ["benefit-mental-health"],
+      "must_include": ["30"]
     },
     {
       "id": "eval-8",
-      "question": "Do you have EV charging?",
-      "relevant_ids": ["amenity-parking"],
-      "must_include": ["charging"]
+      "question": "Do I need a referral to see a specialist on the HMO plan?",
+      "relevant_ids": ["plan-hmo"],
+      "must_include": ["referral"]
     },
     {
       "id": "eval-9",
-      "question": "How do I book a spa massage and is there a discount?",
-      "relevant_ids": ["service-spa"],
-      "must_include": ["24 hours", "15 percent"]
+      "question": "How do I access the member portal for the first time?",
+      "relevant_ids": ["member-portal"],
+      "must_include": ["member ID"]
     },
     {
       "id": "eval-10",
-      "question": "Where should I eat near the hotel for seafood?",
-      "relevant_ids": ["local-dining"],
-      "must_include": ["Harbor Oyster Bar"]
+      "question": "What is the phone number for the 24/7 nurse advice line?",
+      "relevant_ids": ["service-nurse-line", "care-navigation"],
+      "must_include": ["1-800-555-0199"]
     },
     {
       "id": "eval-11",
-      "question": "What perks does Platinum loyalty status give me?",
-      "relevant_ids": ["loyalty-tiers"],
-      "must_include": ["lounge"]
+      "question": "What is the emergency room copay?",
+      "relevant_ids": ["policy-copay"],
+      "must_include": ["250"]
     },
     {
       "id": "eval-12",
-      "question": "Is wifi free or do I pay extra for fast streaming?",
-      "relevant_ids": ["amenity-wifi"],
-      "must_include": ["12"]
+      "question": "What is the in-network deductible on the PPO plan?",
+      "relevant_ids": ["plan-ppo"],
+      "must_include": ["1,000"]
     }
   ]
 }

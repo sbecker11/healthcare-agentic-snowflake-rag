@@ -1,76 +1,76 @@
 {
   "documents": [
     {
-      "id": "policy-checkin",
-      "title": "Check-in and Check-out Policy",
+      "id": "policy-enrollment",
+      "title": "Open Enrollment and Plan Changes",
       "category": "policy",
-      "text": "Standard check-in begins at 3:00 PM and check-out is at 11:00 AM. Early check-in and late check-out are subject to availability. Aurelian Elite and Platinum loyalty members receive guaranteed 4:00 PM late check-out at no charge. A valid government-issued photo ID and the credit card used for booking are required at check-in."
+      "text": "Annual open enrollment runs from November 1 through January 15 each plan year. During this window, members may enroll in a new plan, add or remove dependents, or change coverage tiers without a qualifying life event. Changes made by December 15 take effect January 1; changes made by January 15 take effect February 1. Outside open enrollment, plan changes require a qualifying life event such as marriage, birth, adoption, loss of other coverage, or relocation."
     },
     {
-      "id": "policy-cancellation",
-      "title": "Cancellation and Modification Policy",
+      "id": "policy-prior-auth",
+      "title": "Prior Authorization Requirements",
       "category": "policy",
-      "text": "Flexible-rate reservations may be cancelled free of charge up to 48 hours before arrival. Advance-purchase and non-refundable rates are charged in full at booking and cannot be cancelled or modified. Cancellations within 48 hours of arrival incur a one-night room-and-tax charge. Loyalty members can modify dates once without penalty on flexible rates."
+      "text": "Certain services require prior authorization before care is rendered. These include elective inpatient admissions, advanced imaging (MRI, CT, PET), specialty medications, bariatric surgery, and inpatient rehabilitation. Your provider submits the request; decisions are typically issued within 5 business days for standard requests and 72 hours for urgent requests. Prior authorization is not required for emergency care. Approved authorizations are valid for 90 days unless otherwise noted."
     },
     {
-      "id": "policy-pets",
-      "title": "Pet Policy",
+      "id": "policy-copay",
+      "title": "Copays and Cost Sharing",
       "category": "policy",
-      "text": "We are a pet-friendly hotel. Up to two dogs per room are welcome with a non-refundable cleaning fee of 75 USD per stay. Dogs must weigh under 50 pounds and may not be left unattended in guest rooms. Service animals are always welcome at no charge and are exempt from weight and quantity limits. Cats are accommodated on request."
+      "text": "Cost sharing varies by plan tier and service type. Primary care office visits carry a 25 USD copay; specialist visits are 50 USD. Urgent care visits are 75 USD. Emergency room visits are 250 USD copay, waived if admitted within 24 hours. Telehealth primary care visits are 15 USD. After copays, in-network services apply deductible and coinsurance per your plan summary. Out-of-network services have higher cost sharing and may not count toward the in-network out-of-pocket maximum."
     },
     {
-      "id": "amenity-wifi",
-      "title": "Internet and Connectivity",
-      "category": "amenity",
-      "text": "Complimentary high-speed Wi-Fi is available throughout the property for all guests. Premium streaming-grade bandwidth is included free for loyalty members and is available to other guests for 12 USD per day. Wired connections are available in meeting rooms on request."
+      "id": "benefit-telehealth",
+      "title": "Telehealth and Virtual Care",
+      "category": "benefit",
+      "text": "Telehealth is available 24/7 for primary care, behavioral health, and dermatology through the member portal or mobile app. Virtual primary care visits cost 15 USD per visit. Behavioral health telehealth visits are 25 USD. On-demand urgent video visits are 40 USD. Telehealth services are covered in all 50 states for members on PPO and HMO plans. Prescriptions issued during telehealth visits may be sent to your preferred in-network pharmacy."
     },
     {
-      "id": "amenity-pool",
-      "title": "Pool and Fitness Center",
-      "category": "amenity",
-      "text": "The rooftop infinity pool is open daily from 6:00 AM to 10:00 PM. The 24-hour fitness center offers Peloton bikes, free weights, and a Mirror studio. Poolside cabanas can be reserved for 90 USD per half-day through the concierge. Children under 16 must be accompanied by an adult at the pool."
+      "id": "benefit-pharmacy",
+      "title": "Pharmacy and Formulary",
+      "category": "benefit",
+      "text": "The standard formulary has four tiers. Tier 1 generic drugs are 10 USD copay for a 30-day supply. Tier 2 preferred brand drugs are 40 USD. Tier 3 non-preferred brand drugs are 75 USD. Tier 4 specialty medications are 20 percent coinsurance up to 250 USD per fill. Mail-order pharmacy offers a 90-day supply at two times the 30-day copay for tiers 1 and 2. Prior authorization may apply to specialty and select brand medications."
     },
     {
-      "id": "amenity-breakfast",
-      "title": "Dining and Breakfast",
-      "category": "amenity",
-      "text": "The Atrium restaurant serves breakfast from 6:30 AM to 10:30 AM and dinner from 5:00 PM to 10:00 PM. A daily breakfast buffet is 28 USD per adult and complimentary for Elite and Platinum loyalty members. In-room dining is available 24 hours. Dietary accommodations including vegan, gluten-free, halal, and kosher are available with advance notice."
+      "id": "benefit-mental-health",
+      "title": "Mental Health and Substance Use Coverage",
+      "category": "benefit",
+      "text": "Mental health and substance use disorder services are covered at parity with medical benefits. Outpatient therapy visits are a 25 USD copay in-network. Inpatient psychiatric care requires prior authorization and is subject to medical necessity review. The plan covers up to 30 outpatient therapy visits per calendar year without additional authorization; additional visits may require clinical review. Crisis line support is available 24/7 at no charge."
     },
     {
-      "id": "amenity-parking",
-      "title": "Parking and Transportation",
-      "category": "amenity",
-      "text": "Valet parking is 45 USD per night with unlimited in-and-out privileges. Self-parking is 32 USD per night. Electric-vehicle charging stations are available in the garage at no additional cost. A complimentary scheduled shuttle serves the airport and downtown core between 6:00 AM and 11:00 PM."
+      "id": "benefit-preventive",
+      "title": "Preventive Care Benefits",
+      "category": "benefit",
+      "text": "In-network preventive services are covered at 100 percent with no copay, deductible, or coinsurance when provided by an in-network provider and billed with appropriate preventive codes. Covered services include annual wellness visits, immunizations, age-appropriate cancer screenings, contraception, and pediatric well-child visits. Preventive colonoscopy is covered; if a polyp is removed during screening, applicable cost sharing may apply to the procedure portion."
     },
     {
-      "id": "loyalty-tiers",
-      "title": "Aurelian Rewards Loyalty Program",
-      "category": "loyalty",
-      "text": "The Aurelian Rewards program has three tiers: Member, Elite (after 25 nights per year), and Platinum (after 60 nights per year). Members earn 10 points per dollar spent. Elite members receive room upgrades when available, free breakfast, and late check-out. Platinum members additionally receive guaranteed lounge access, a welcome amenity, and a 50 percent points bonus."
+      "id": "plan-hmo",
+      "title": "HMO Plan Overview",
+      "category": "plan",
+      "text": "The HMO plan requires selection of a primary care provider (PCP) who coordinates referrals to specialists. Specialist visits require a PCP referral except for obstetrics, gynecology, and in-network mental health. The annual in-network deductible is 1,500 USD individual or 3,000 USD family. The in-network out-of-pocket maximum is 6,500 USD individual or 13,000 USD family. Out-of-network services are not covered except for emergency care."
     },
     {
-      "id": "loyalty-redemption",
-      "title": "Points Redemption",
-      "category": "loyalty",
-      "text": "Points can be redeemed for free nights starting at 15,000 points for a standard room in off-peak season. Points never expire as long as the account has activity within 24 months. Points can also be transferred to airline partners at a 3-to-1 ratio or used for spa and dining credits at a rate of 100 points per dollar."
+      "id": "plan-ppo",
+      "title": "PPO Plan Overview",
+      "category": "plan",
+      "text": "The PPO plan allows direct access to in-network specialists without a referral. The in-network deductible is 1,000 USD individual or 2,000 USD family. In-network out-of-pocket maximum is 5,500 USD individual or 11,000 USD family. Out-of-network services are covered at 50 percent coinsurance after the out-of-network deductible of 3,000 USD individual. Specialist office visits are a 50 USD copay in-network."
     },
     {
-      "id": "service-spa",
-      "title": "Spa and Wellness",
+      "id": "member-portal",
+      "title": "Member Portal and Digital Tools",
+      "category": "member",
+      "text": "Members access claims, ID cards, provider search, and telehealth scheduling through the secure member portal at members.examplehealth.com or the mobile app. First-time users register with their member ID and date of birth. Paper Explanation of Benefits (EOB) can be switched to paperless in account settings. Secure messaging with care coordinators responds within 1 business day. Two-factor authentication is required for account access."
+    },
+    {
+      "id": "care-navigation",
+      "title": "Care Navigation and Provider Search",
+      "category": "care",
+      "text": "Use the provider directory in the member portal to search in-network primary care, specialists, hospitals, and urgent care by ZIP code, specialty, language, and accessibility needs. Care navigators help schedule appointments, explain benefits, and coordinate transitions of care at no additional cost. Call 1-800-555-0142 Monday through Friday 8:00 AM to 6:00 PM local time. For after-hours clinical questions, use the 24/7 nurse advice line."
+    },
+    {
+      "id": "service-nurse-line",
+      "title": "24/7 Nurse Advice Line",
       "category": "service",
-      "text": "The Lumen Spa is open daily from 9:00 AM to 8:00 PM and offers massages, facials, and hydrotherapy. Treatments should be booked at least 24 hours in advance through the concierge or the in-room tablet. Loyalty members receive 15 percent off all spa services. A 24-hour cancellation policy applies to all spa bookings."
-    },
-    {
-      "id": "service-business",
-      "title": "Business and Event Services",
-      "category": "service",
-      "text": "The business center is open 24 hours with printing, scanning, and private workstations. Six meeting rooms accommodate 8 to 200 guests and include AV equipment and videoconferencing. A dedicated events team can arrange catering, room blocks, and group rates for ten or more rooms. Day-use meeting packages start at 65 USD per person."
-    },
-    {
-      "id": "local-dining",
-      "title": "Local Dining Recommendations",
-      "category": "local",
-      "text": "Within walking distance, the concierge recommends Cento for handmade pasta, Saffron House for modern Indian, and the Harbor Oyster Bar for seafood. Reservations are recommended on weekends and the concierge can arrange them. A vibrant night market with street food runs Thursday through Sunday three blocks east of the hotel."
+      "text": "Registered nurses are available 24 hours a day, 7 days a week at 1-800-555-0199 for clinical guidance, symptom assessment, and help deciding whether to seek emergency, urgent, or primary care. Nurse line consultations are free for all enrolled members. Nurses do not diagnose conditions or prescribe medication but can escalate to an on-call physician for urgent clinical review when appropriate."
     }
   ]
 }

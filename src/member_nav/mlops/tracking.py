@@ -24,7 +24,7 @@ except Exception:  # pragma: no cover
 
 
 class Tracker:
-    def __init__(self, experiment: str = "concierge-rag",
+    def __init__(self, experiment: str = "member-nav-rag",
                  tracking_uri: str | None = None,
                  fallback_path: str = "runs.jsonl"):
         self.experiment = experiment

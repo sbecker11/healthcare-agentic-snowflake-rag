@@ -12,6 +12,9 @@ A `Retriever` protocol with two interchangeable adapters:
 
 The graph depends only on the protocol, so swapping retrieval backends is a
 one-line change and HPO can tune whichever backend is active.
+
+Canonical Snowflake medallion DDL lives under ``snowflake/`` (bronze → silver →
+gold → semantic views → Cortex Search → governance).
 """
 from __future__ import annotations
 
@@ -48,7 +51,7 @@ def load_documents(path: str | Path) -> list[dict]:
 class TfidfRetriever:
     """Offline cosine-similarity retriever over a TF-IDF document matrix.
 
-    Stands in for a production vector store (pgvector / OpenSearch / Cortex).
+    Stands in for a production vector store (Cortex Search / pgvector / OpenSearch).
     The interface and scores are what the graph and HPO consume, so the rest of
     the system is agnostic to this being TF-IDF rather than dense embeddings.
     """
@@ -82,18 +85,18 @@ class CortexRetriever:
     Cortex Search is a managed hybrid retrieval service: it embeds and indexes
     your documents, then serves each query through vector search + keyword search
     + semantic reranking. You provision the service once with SQL (see
-    ``CORTEX_SEARCH_DDL`` below), then query it via the Snowpark / snowflake.core
-    Python API. This adapter is intentionally lazy-connected so importing the
-    module never requires Snowflake to be installed or reachable.
+    ``snowflake/05_cortex_search.sql``), then query it via the Snowpark /
+    snowflake.core Python API. This adapter is intentionally lazy-connected so
+    importing the module never requires Snowflake to be installed or reachable.
 
     Usage:
         from snowflake.snowpark import Session
         session = Session.builder.configs(conn_params).create()
-        retriever = CortexRetriever(session, service_name="CONCIERGE_KB_SEARCH")
+        retriever = CortexRetriever(session, service_name="MEMBER_KB_SEARCH")
     """
 
     def __init__(self, session, service_name: str, database: str = "AI",
-                 schema: str = "CONCIERGE"):
+                 schema: str = "MEMBER_NAV"):
         self._session = session
         self._service_name = service_name
         self._database = database
@@ -135,22 +138,12 @@ class CortexRetriever:
         return out
 
 
-# DDL to provision the managed service once, against your own Snowflake account.
-# Cortex Search handles embedding (snowflake-arctic-embed), indexing, hybrid
-# retrieval, and reranking; no external vector DB or ETL is required.
+# Summary DDL; full medallion pipeline in snowflake/*.sql
 CORTEX_SEARCH_DDL = """
-CREATE DATABASE IF NOT EXISTS AI;
-CREATE SCHEMA IF NOT EXISTS AI.CONCIERGE;
+-- See snowflake/01_bronze.sql through snowflake/06_governance.sql for the
+-- full bronze → silver → gold → semantic → Cortex → governance pipeline.
 
-CREATE OR REPLACE TABLE AI.CONCIERGE.KNOWLEDGE_BASE (
-    id      STRING,
-    title   STRING,
-    category STRING,
-    text    STRING
-);
--- (load rows from data/knowledge_base.json via COPY INTO or Snowpark write)
-
-CREATE OR REPLACE CORTEX SEARCH SERVICE AI.CONCIERGE.CONCIERGE_KB_SEARCH
+CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_NAV.MEMBER_KB_SEARCH
     ON text
     ATTRIBUTES id, title, category
     WAREHOUSE = COMPUTE_WH
@@ -158,6 +151,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE AI.CONCIERGE.CONCIERGE_KB_SEARCH
     EMBEDDING_MODEL = 'snowflake-arctic-embed-l-v2.0'
     AS (
         SELECT id, title, category, text
-        FROM AI.CONCIERGE.KNOWLEDGE_BASE
+        FROM AI.GOLD.MEMBER_KB
+        WHERE is_active = TRUE
     );
 """
