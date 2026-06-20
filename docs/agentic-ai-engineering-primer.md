@@ -119,7 +119,15 @@ retriever = CortexRetriever(session, service_name="MEMBER_KB_SEARCH")
 app = build_graph(RagConfig(), retriever)
 ```
 
+## Scale and production considerations
+
+The portfolio implements the **architecture and MLOps patterns** at demo scale.
+For conversation on **millions of diagnosis/procedure codes**, **multi-tenant
+isolation**, **millions of members**, and **performance tuning** at production
+scale, see [scale-performance-multi-tenant.md](scale-performance-multi-tenant.md).
+
 ## Related docs
 
 - [README](../README.md) — quickstart and technical deep dive
+- [scale-performance-multi-tenant.md](scale-performance-multi-tenant.md) — codes, tenancy, members, latency
 - [snowflake/README.md](../snowflake/README.md) — DDL deploy order and load examples

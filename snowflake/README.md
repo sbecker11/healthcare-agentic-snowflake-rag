@@ -55,3 +55,10 @@ session = Session.builder.configs(conn_params).create()
 retriever = CortexRetriever(session, service_name="MEMBER_KB_SEARCH")
 app = build_graph(RagConfig(), retriever)
 ```
+
+## Scale and tenancy
+
+Medallion DDL here is single-tenant and demo-sized. Production extensions
+(`tenant_id`, code reference gold, member clustering, tenant-scoped row access
+policies) are discussed in
+[docs/scale-performance-multi-tenant.md](../docs/scale-performance-multi-tenant.md).

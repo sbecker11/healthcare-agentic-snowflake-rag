@@ -114,7 +114,8 @@ A: Certain services require prior authorization before care is rendered. These i
 Retrieval sits behind a `Retriever` protocol, so the graph is agnostic to the
 backend. The default `TfidfRetriever` runs locally; the `CortexRetriever`
 swaps in Snowflake's managed **Cortex Search** — hybrid vector + keyword search
-with semantic reranking — without changing a line of graph code.
+
+### with semantic reranking — without changing a line of graph code.
 
 ```mermaid
 flowchart LR
@@ -122,7 +123,16 @@ flowchart LR
         GNODE["retrieve node"] --> PROTO{{"Retriever protocol"}}
         PROTO -. "default / offline" .-> TFIDF["TfidfRetriever<br/>(scikit-learn cosine)"]
         PROTO == "production" ==> CORTEX["CortexRetriever<br/>adapter"]
+        TFIDF -- "RetrievedDoc[]" --> GNODE
+        CORTEX -- "RetrievedDoc[]" --> GNODE
     end
+
+    subgraph LOCAL["Local / offline (no Snowflake)"]
+        JSON[("knowledge_base.json")] --> MAT["TF-IDF matrix<br/>(fit at init)"]
+    end
+
+    TFIDF -- "search(query, top_k)" --> MAT
+    MAT -- "cosine-ranked rows<br/>(id, title, text)" --> TFIDF
 
     subgraph SNOW["Snowflake account"]
         KB[("GOLD.MEMBER_KB")] --> SVC["CORTEX SEARCH<br/>MEMBER_KB_SEARCH"]
@@ -132,11 +142,12 @@ flowchart LR
 
     CORTEX -- "search(query, top_k)" --> SVC
     HYB -- "reranked rows<br/>(id, title, text)" --> CORTEX
-    CORTEX -- "RetrievedDoc[]" --> GNODE
 
     classDef app fill:#2E75B6,stroke:#1b4d7a,color:#fff;
+    classDef local fill:#f5f0e8,stroke:#8a7a5c,color:#3d3529;
     classDef snow fill:#eaf3fb,stroke:#29b5e8,color:#0b6c8c;
     class GNODE,TFIDF,CORTEX app;
+    class JSON,MAT local;
     class KB,SVC,EMB,HYB snow;
 ```
 
@@ -254,7 +265,7 @@ pytest -q
 
 ```
 snowflake/               Medallion DDL, semantic views, Cortex, governance
-docs/                    agentic-ai-engineering-primer.md (role alignment)
+docs/                    primer · scale / multi-tenant / performance design notes
 src/member_nav/
 ├── config.py            RagConfig dataclass + SEARCH_SPACE (the tunable surface)
 ├── llm.py               Claude client w/ deterministic offline mock fallback
@@ -283,6 +294,19 @@ tests/     test_pipeline.py (14 tests, offline)
 - **Offline‑first.** Deterministic mock LLM keeps CI reproducible without API keys.
 - **Gated promotion.** No config reaches Production without clearing metric floors.
 - **Governed access.** Illustrative roles, masking, and row policies in `06_governance.sql`.
+
+## Scale, multi-tenant, and performance
+
+This repo runs at **portfolio scale** (synthetic KB, single tenant, offline
+TF-IDF). Production health-plan workloads raise distinct design questions:
+millions of ICD/CPT/HCPCS codes, tenant isolation across plans and regions,
+millions of members (shared policy vs member-specific lookups), and latency/cost
+SLOs for retrieval and agent loops.
+
+See **[docs/scale-performance-multi-tenant.md](docs/scale-performance-multi-tenant.md)**
+for how to extend this architecture — structured code gold layers, Cortex
+attribute filters, row access policies, split retrievers/tools, and promotion
+gates that include latency — without conflating policy RAG with code-table search.
 
 ---
 
