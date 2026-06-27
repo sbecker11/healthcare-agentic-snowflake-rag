@@ -3,7 +3,7 @@
 A production-shaped portfolio project for **agentic AI engineering on
 Snowflake**: medallion-architecture semantic data assets (bronze → silver →
 gold), **Cortex Search** for hybrid retrieval, **semantic views** for trusted
-analytics, and a **LangGraph** member-navigation agent with a full **MLOps
+analytics, and a **LangGraph** Member Benefits Assistant agent with a full **MLOps
 lifecycle** (MLflow, Optuna HPO, promotion gate, PSI drift monitoring).
 
 The domain is **health-plan member benefits navigation** (coverage, copays,
@@ -154,7 +154,7 @@ flowchart LR
 Provision Cortex Search (full pipeline in `snowflake/05_cortex_search.sql`):
 
 ```sql
-CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_NAV.MEMBER_KB_SEARCH
+CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_BENEFITS_ASSISTANT.MEMBER_KB_SEARCH
     ON text
     ATTRIBUTES id, title, category
     WAREHOUSE = COMPUTE_WH
@@ -167,7 +167,7 @@ then point the graph at it:
 
 ```python
 from snowflake.snowpark import Session
-from member_nav import CortexRetriever, build_graph, RagConfig
+from member_benefits_assistant import CortexRetriever, build_graph, RagConfig
 
 session = Session.builder.configs(conn_params).create()
 retriever = CortexRetriever(session, service_name="MEMBER_KB_SEARCH")
@@ -266,7 +266,7 @@ pytest -q
 ```
 snowflake/               Medallion DDL, semantic views, Cortex, governance
 docs/                    agentic-ai-engineering-primer.md (role alignment)
-src/member_nav/
+src/member_benefits_assistant/
 ├── config.py            RagConfig dataclass + SEARCH_SPACE (the tunable surface)
 ├── llm.py               Claude client w/ deterministic offline mock fallback
 ├── knowledge.py         Retriever protocol + TfidfRetriever + CortexRetriever

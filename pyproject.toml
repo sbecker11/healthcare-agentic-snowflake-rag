@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "healthcare-agentic-snowflake-rag"
 version = "0.2.0"
-description = "Agentic RAG for health-plan member navigation on LangGraph with Snowflake Cortex, medallion semantic assets, and an MLOps lifecycle"
+description = "Agentic RAG for health-plan benefits navigation on LangGraph with Snowflake Cortex, medallion semantic assets, and an MLOps lifecycle"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Shawn Becker", email = "shawn.becker@spexture.com" }]

@@ -96,7 +96,7 @@ class CortexRetriever:
     """
 
     def __init__(self, session, service_name: str, database: str = "AI",
-                 schema: str = "MEMBER_NAV"):
+                 schema: str = "MEMBER_BENEFITS_ASSISTANT"):
         self._session = session
         self._service_name = service_name
         self._database = database
@@ -143,7 +143,7 @@ CORTEX_SEARCH_DDL = """
 -- See snowflake/01_bronze.sql through snowflake/06_governance.sql for the
 -- full bronze → silver → gold → semantic → Cortex → governance pipeline.
 
-CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_NAV.MEMBER_KB_SEARCH
+CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_BENEFITS_ASSISTANT.MEMBER_KB_SEARCH
     ON text
     ATTRIBUTES id, title, category
     WAREHOUSE = COMPUTE_WH

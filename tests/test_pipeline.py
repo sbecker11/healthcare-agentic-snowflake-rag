@@ -1,4 +1,4 @@
-"""Test suite for the Member Nav agentic-RAG + MLOps pipeline.
+"""Test suite for the Member Benefits Assistant agentic-RAG + MLOps pipeline.
 
 Runs fully offline (deterministic mock LLM, TF-IDF retriever). Exercises the
 graph's cyclic control flow, the eval gate, drift detection, the registry's
@@ -14,9 +14,9 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from member_nav import RagConfig, TfidfRetriever, load_documents, run_once, build_graph, LLM
-from member_nav.knowledge import RetrievedDoc, Retriever
-from member_nav.mlops import (
+from member_benefits_assistant import RagConfig, TfidfRetriever, load_documents, run_once, build_graph, LLM
+from member_benefits_assistant.knowledge import RetrievedDoc, Retriever
+from member_benefits_assistant.mlops import (
     evaluate, load_eval_set, passes_gate, EvalResult,
     population_stability_index, ConfigRegistry, run_sweep, Tracker,
 )

@@ -10,8 +10,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from member_nav import RagConfig, TfidfRetriever, load_documents, LLM
-from member_nav.mlops import evaluate, load_eval_set, ConfigRegistry, passes_gate
+from member_benefits_assistant import RagConfig, TfidfRetriever, load_documents, LLM
+from member_benefits_assistant.mlops import evaluate, load_eval_set, ConfigRegistry, passes_gate
 
 ROOT = Path(__file__).resolve().parents[1]
 

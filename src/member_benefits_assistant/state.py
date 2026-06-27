@@ -1,4 +1,4 @@
-"""LangGraph state for the member navigation agent.
+"""LangGraph state for the Member Benefits Assistant agent.
 
 Fields use explicit reducers: `retrieved` accumulates across rewrite iterations
 (operator.add); scalar fields are last-write-wins.
@@ -11,7 +11,7 @@ from typing import Annotated, TypedDict
 from .knowledge import RetrievedDoc
 
 
-class MemberNavState(TypedDict, total=False):
+class MemberBenefitsAssistantState(TypedDict, total=False):
     question: str
     query: str
     retrieved: Annotated[list[RetrievedDoc], operator.add]

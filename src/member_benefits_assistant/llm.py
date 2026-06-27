@@ -53,7 +53,7 @@ class LLM:
             else "Answer clearly as a member services advocate, citing the specific benefit or policy detail."
         )
         prompt = (
-            "You are a health-plan member navigation assistant. Answer the member's "
+            "You are a Member Benefits Assistant for a health plan. Answer the member's "
             f"question using ONLY the context below. {style} If the context does not "
             "contain the answer, say you will connect them with member services.\n\n"
             f"Context:\n{context}\n\nMember question: {query}\n\nAnswer:"

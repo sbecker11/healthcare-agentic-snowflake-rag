@@ -1,6 +1,6 @@
 # Snowflake medallion + Cortex assets
 
-Illustrative DDL for a **health-plan member navigation** portfolio. All data is
+Illustrative DDL for a **health-plan benefits navigation** portfolio. All data is
 synthetic; no real PHI. Deploy in order:
 
 | Script | Layer | Purpose |
@@ -21,7 +21,7 @@ source systems
     → GOLD.MEMBER_KB ──────────→ CORTEX SEARCH (MEMBER_KB_SEARCH)
     → GOLD.PLAN_COST_SHARING ──→ SEMANTIC views
                                       ↓
-                              member_nav LangGraph agent
+                              Member Benefits Assistant LangGraph agent
 ```
 
 ## Load local JSON into bronze (example)
@@ -49,7 +49,7 @@ Then run `02_silver.sql` → `03_gold.sql` → `05_cortex_search.sql`.
 
 ```python
 from snowflake.snowpark import Session
-from member_nav import CortexRetriever, build_graph, RagConfig
+from member_benefits_assistant import CortexRetriever, build_graph, RagConfig
 
 session = Session.builder.configs(conn_params).create()
 retriever = CortexRetriever(session, service_name="MEMBER_KB_SEARCH")

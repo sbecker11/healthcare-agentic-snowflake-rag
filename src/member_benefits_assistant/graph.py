@@ -35,7 +35,7 @@ from langgraph.graph import StateGraph, START, END
 from .config import RagConfig
 from .knowledge import Retriever, RetrievedDoc
 from .llm import LLM
-from .state import MemberNavState
+from .state import MemberBenefitsAssistantState
 
 
 def _keyword_overlap(question: str, doc: RetrievedDoc) -> float:
@@ -62,7 +62,7 @@ def build_graph(
 
     # -- nodes ---------------------------------------------------------------
 
-    def retrieve(state: MemberNavState) -> dict:
+    def retrieve(state: MemberBenefitsAssistantState) -> dict:
         query = state.get("query") or state["question"]
         docs = retriever.search(query, top_k=config.top_k)
         return {
@@ -72,7 +72,7 @@ def build_graph(
                       f"top_score={docs[0].score:.3f}" if docs else "retrieve -> 0 docs"],
         }
 
-    def grade_retrieval(state: MemberNavState) -> dict:
+    def grade_retrieval(state: MemberBenefitsAssistantState) -> dict:
         docs = state.get("context_docs") or []
         if not docs:
             return {"retrieval_ok": False, "trace": ["grade_retrieval -> no docs"]}
@@ -88,7 +88,7 @@ def build_graph(
                       f"overlap={overlap:.3f} min={config.min_keyword_overlap})"],
         }
 
-    def rewrite_query(state: MemberNavState) -> dict:
+    def rewrite_query(state: MemberBenefitsAssistantState) -> dict:
         docs = state.get("context_docs") or []
         weak = docs[0].text if docs else ""
         new_query = llm.rewrite_query(state["question"], weak)
@@ -98,7 +98,7 @@ def build_graph(
             "trace": [f"rewrite_query -> {new_query!r}"],
         }
 
-    def generate(state: MemberNavState) -> dict:
+    def generate(state: MemberBenefitsAssistantState) -> dict:
         docs = state.get("context_docs") or []
         context = "\n\n".join(f"[{d.title}] {d.text}" for d in docs)
         answer = llm.generate_answer(
@@ -106,7 +106,7 @@ def build_graph(
         )
         return {"answer": answer, "trace": [f"generate -> {len(answer)} chars"]}
 
-    def grade_answer(state: MemberNavState) -> dict:
+    def grade_answer(state: MemberBenefitsAssistantState) -> dict:
         answer = (state.get("answer") or "").strip()
         docs = state.get("context_docs") or []
         ctx_terms = set(
@@ -127,14 +127,14 @@ def build_graph(
 
     # -- conditional edge routers -------------------------------------------
 
-    def after_retrieval(state: MemberNavState) -> str:
+    def after_retrieval(state: MemberBenefitsAssistantState) -> str:
         if state.get("retrieval_ok"):
             return "generate"
         if state.get("rewrite_count", 0) >= config.max_rewrites:
             return "generate"  # out of rewrite budget; proceed with best effort
         return "rewrite_query"
 
-    def after_answer(state: MemberNavState) -> str:
+    def after_answer(state: MemberBenefitsAssistantState) -> str:
         if state.get("answer_ok"):
             return END
         if state.get("regen_count", 0) > config.max_regenerations:
@@ -143,7 +143,7 @@ def build_graph(
 
     # -- wire the graph ------------------------------------------------------
 
-    g = StateGraph(MemberNavState)
+    g = StateGraph(MemberBenefitsAssistantState)
     g.add_node("retrieve", retrieve)
     g.add_node("grade_retrieval", grade_retrieval)
     g.add_node("rewrite_query", rewrite_query)
@@ -171,10 +171,10 @@ def run_once(
     config: RagConfig,
     retriever: Retriever,
     llm: Optional[LLM] = None,
-) -> MemberNavState:
+) -> MemberBenefitsAssistantState:
     """Convenience: execute the graph once (no persistence) and return state."""
     app = build_graph(config, retriever, llm)
-    init: MemberNavState = {
+    init: MemberBenefitsAssistantState = {
         "question": question,
         "query": question,
         "retrieved": [],

@@ -1,4 +1,4 @@
-"""Hyperparameter configuration for the Member Nav agentic-RAG pipeline.
+"""Hyperparameter configuration for the Member Benefits Assistant agentic-RAG pipeline.
 
 This is the object that hyperparameter optimization searches over. Keeping the
 search space in one typed place is deliberate: it is the boundary between the

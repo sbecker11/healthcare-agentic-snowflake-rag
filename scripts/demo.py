@@ -11,8 +11,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from member_nav import RagConfig, TfidfRetriever, load_documents, build_graph, LLM
-from member_nav.state import MemberNavState
+from member_benefits_assistant import RagConfig, TfidfRetriever, load_documents, build_graph, LLM
+from member_benefits_assistant.state import MemberBenefitsAssistantState
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -38,7 +38,7 @@ def main() -> None:
     banner("AGENTIC-RAG TRACES")
     app = build_graph(config, retriever, llm)
     for q in questions:
-        init: MemberNavState = {
+        init: MemberBenefitsAssistantState = {
             "question": q, "query": q, "retrieved": [],
             "rewrite_count": 0, "regen_count": 0, "trace": [],
         }
@@ -58,7 +58,7 @@ def main() -> None:
     db = ROOT / "checkpoints.sqlite"
     # Allow our Pydantic RetrievedDoc to round-trip through the checkpoint store.
     serde = JsonPlusSerializer(
-        allowed_msgpack_modules=[("member_nav.knowledge", "RetrievedDoc")]
+        allowed_msgpack_modules=[("member_benefits_assistant.knowledge", "RetrievedDoc")]
     )
     conn = sqlite3.connect(str(db), check_same_thread=False)
     try:

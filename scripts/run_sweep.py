@@ -10,8 +10,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from member_nav import TfidfRetriever, load_documents, LLM
-from member_nav.mlops import run_sweep, load_eval_set, ConfigRegistry, Tracker
+from member_benefits_assistant import TfidfRetriever, load_documents, LLM
+from member_benefits_assistant.mlops import run_sweep, load_eval_set, ConfigRegistry, Tracker
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -23,7 +23,7 @@ def main() -> None:
     retriever = TfidfRetriever(docs)
     eval_set = load_eval_set(ROOT / "data" / "eval_set.json")
 
-    tracker = Tracker(experiment="member-nav-rag")
+    tracker = Tracker(experiment="member-benefits-assistant-rag")
     registry = ConfigRegistry(ROOT / "registry.json")
 
     print(f"Running {n_trials}-trial TPE sweep "

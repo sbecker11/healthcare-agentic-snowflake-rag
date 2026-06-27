@@ -1,4 +1,4 @@
-"""Member Nav: agentic RAG for health-plan member navigation on LangGraph + MLOps."""
+"""Member Benefits Assistant: agentic RAG for health-plan benefits navigation on LangGraph + MLOps."""
 from .config import RagConfig, SEARCH_SPACE
 from .knowledge import (
     TfidfRetriever,
@@ -9,11 +9,11 @@ from .knowledge import (
 )
 from .llm import LLM
 from .graph import build_graph, run_once
-from .state import MemberNavState
+from .state import MemberBenefitsAssistantState
 
 __all__ = [
     "RagConfig", "SEARCH_SPACE", "TfidfRetriever", "CortexRetriever",
     "Retriever", "RetrievedDoc", "load_documents", "LLM", "build_graph",
-    "run_once", "MemberNavState",
+    "run_once", "MemberBenefitsAssistantState",
 ]
 __version__ = "0.2.0"

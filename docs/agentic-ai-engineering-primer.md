@@ -12,9 +12,9 @@ Cambia Health). All member data in this repo is **synthetic**; no real PHI.
 | Medallion bronze / silver / gold layers | `snowflake/01_bronze.sql` → `03_gold.sql` | Implemented (DDL + lineage comments) |
 | Semantic views and business abstractions | `snowflake/04_semantic_views.sql` (`MEMBER_COST_SHARING`, `V_MEMBER_COPAY`) | Implemented |
 | Reusable data products from cross-team requirements | `data/knowledge_base.json`, `data/eval_set.json` (product/analytics ground truth) | Implemented |
-| Operationalize Snowflake Cortex for agent workloads | `CortexRetriever` in `src/member_nav/knowledge.py`, `snowflake/05_cortex_search.sql` | Implemented |
-| Data quality validation | `src/member_nav/mlops/evaluation.py` (recall@k, accuracy, promotion gate) | Implemented |
-| Performance tuning | `src/member_nav/mlops/tuning.py` (Optuna TPE over `RagConfig`) | Implemented |
+| Operationalize Snowflake Cortex for agent workloads | `CortexRetriever` in `src/member_benefits_assistant/knowledge.py`, `snowflake/05_cortex_search.sql` | Implemented |
+| Data quality validation | `src/member_benefits_assistant/mlops/evaluation.py` (recall@k, accuracy, promotion gate) | Implemented |
+| Performance tuning | `src/member_benefits_assistant/mlops/tuning.py` (Optuna TPE over `RagConfig`) | Implemented |
 | Lineage-aware transformations | Bronze → silver → gold `lineage_sk` / `ingest_batch_id`; MLflow trial lineage | Implemented |
 | Governed access patterns | `snowflake/06_governance.sql` (roles, masking, row access policies) | Implemented (illustrative) |
 | Agentic workloads at scale | LangGraph cyclic graph, bounded loops, SqliteSaver checkpointing, PSI drift | Implemented |
@@ -40,7 +40,7 @@ flowchart TB
         CS["MEMBER_KB_SEARCH"]
     end
     subgraph AGENT["Agent (LangGraph)"]
-        G["member_nav graph"]
+        G["Member Benefits Assistant graph"]
     end
 
     RAW --> BP --> KB --> CS --> G
@@ -55,12 +55,12 @@ flowchart TB
 | Bronze | `AI.SILVER.BENEFIT_POLICY` | Trim, category normalize, latest-wins dedupe |
 | Silver | `AI.GOLD.MEMBER_KB` | Curated agent-ready documents with `lineage_sk` |
 | Silver structured | `AI.GOLD.PLAN_COST_SHARING` | Plan cost-sharing reference rows |
-| Gold KB | `AI.MEMBER_NAV.MEMBER_KB_SEARCH` | Cortex Search indexing + hybrid retrieval |
+| Gold KB | `AI.MEMBER_BENEFITS_ASSISTANT.MEMBER_KB_SEARCH` | Cortex Search indexing + hybrid retrieval |
 | Gold structured | `AI.SEMANTIC.*` | Business-friendly semantic and SQL views |
 
 ## Agent layer
 
-The `member_nav` package implements **agentic RAG** — not a linear chain:
+The `member_benefits_assistant` package implements **agentic RAG** — not a linear chain:
 
 1. **Retrieve** from `Retriever` (TF-IDF offline, Cortex Search production)
 2. **Grade retrieval** → rewrite query if weak (bounded loop)
@@ -75,7 +75,7 @@ tuned by Optuna, tracked in MLflow, and promoted through a quality gate.
 | Stage | Component | Purpose |
 |-------|-----------|---------|
 | Search | `SEARCH_SPACE` + Optuna TPE | Find optimal `RagConfig` |
-| Track | MLflow (`member-nav-rag` experiment) | Audit params and metrics per trial |
+| Track | MLflow (`member-benefits-assistant-rag` experiment) | Audit params and metrics per trial |
 | Gate | `passes_gate()` | Floors: recall ≥ 0.75, accuracy ≥ 0.50; beat incumbent |
 | Register | `ConfigRegistry` | Versioned Staging → Production promotion |
 | Monitor | PSI on retrieval top-scores | Flag distribution drift without code changes |
@@ -84,8 +84,8 @@ tuned by Optuna, tracked in MLflow, and promoted through a quality gate.
 
 `snowflake/06_governance.sql` defines:
 
-- **`MEMBER_NAV_AGENT_ROLE`** — read `MEMBER_KB`, use Cortex Search warehouse
-- **`MEMBER_NAV_ANALYST_ROLE`** — read semantic views and structured gold
+- **`MEMBER_BENEFITS_ASSISTANT_AGENT_ROLE`** — read `MEMBER_KB`, use Cortex Search warehouse
+- **`MEMBER_BENEFITS_ASSISTANT_ANALYST_ROLE`** — read semantic views and structured gold
 - **Masking policy** on bronze `member_id_hash`
 - **Row access policy** on gold `MEMBER_KB` (`is_active = TRUE`)
 
@@ -93,7 +93,7 @@ tuned by Optuna, tracked in MLflow, and promoted through a quality gate.
 
 > Portfolio: Snowflake medallion pipeline (bronze/silver/gold) feeding a Cortex
 > Search semantic asset and semantic views over plan cost-sharing; LangGraph
-> agentic RAG member navigator with MLflow tracking, Optuna HPO, promotion
+> agentic RAG Member Benefits Assistant with MLflow tracking, Optuna HPO, promotion
 > gates, and PSI drift monitoring. Synthetic health-plan data only.
 
 ## Local development (no Snowflake required)
@@ -112,7 +112,7 @@ refresh silver/gold, then:
 
 ```python
 from snowflake.snowpark import Session
-from member_nav import CortexRetriever, build_graph, RagConfig
+from member_benefits_assistant import CortexRetriever, build_graph, RagConfig
 
 session = Session.builder.configs(conn_params).create()
 retriever = CortexRetriever(session, service_name="MEMBER_KB_SEARCH")

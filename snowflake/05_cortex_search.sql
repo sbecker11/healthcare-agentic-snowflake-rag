@@ -1,9 +1,9 @@
 -- Cortex Search: operationalize semantic intelligence on gold MEMBER_KB.
--- Feeds the member_nav CortexRetriever adapter (hybrid vector + keyword + rerank).
+-- Feeds the member_benefits_assistant CortexRetriever adapter (hybrid vector + keyword + rerank).
 
-CREATE SCHEMA IF NOT EXISTS AI.MEMBER_NAV;
+CREATE SCHEMA IF NOT EXISTS AI.MEMBER_BENEFITS_ASSISTANT;
 
-CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_NAV.MEMBER_KB_SEARCH
+CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_BENEFITS_ASSISTANT.MEMBER_KB_SEARCH
     ON text
     ATTRIBUTES id, title, category
     WAREHOUSE = COMPUTE_WH
@@ -15,5 +15,5 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE AI.MEMBER_NAV.MEMBER_KB_SEARCH
         WHERE is_active = TRUE
     );
 
-COMMENT ON CORTEX SEARCH SERVICE AI.MEMBER_NAV.MEMBER_KB_SEARCH IS
+COMMENT ON CORTEX SEARCH SERVICE AI.MEMBER_BENEFITS_ASSISTANT.MEMBER_KB_SEARCH IS
     'Managed hybrid search over member benefits knowledge. Production retrieval for agentic RAG.';

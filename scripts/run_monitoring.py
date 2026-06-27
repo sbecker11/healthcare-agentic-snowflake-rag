@@ -13,7 +13,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from member_nav.mlops import population_stability_index
+from member_benefits_assistant.mlops import population_stability_index
 
 
 def main() -> None:

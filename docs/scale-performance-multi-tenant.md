@@ -101,7 +101,7 @@ contracts** from one platform. Tenancy must be enforced at **data**, **search**,
    across tenants without an explicit, audited cross-tenant role.
 
 2. **Row access policies (RAP)** — Extend `06_governance.sql` so
-   `MEMBER_NAV_AGENT_ROLE` sees only rows where
+   `MEMBER_BENEFITS_ASSISTANT_AGENT_ROLE` sees only rows where
    `tenant_id = CURRENT_SESSION_TENANT()` (session context set by the app).
 
 3. **Cortex Search attributes** — Index with `tenant_id`, `plan_code`, `category`
@@ -138,7 +138,7 @@ contracts** from one platform. Tenancy must be enforced at **data**, **search**,
 
 ## Millions of members
 
-Member navigation mixes **plan-wide policy** (shared KB) with **member-specific
+Benefits navigation mixes **plan-wide policy** (shared KB) with **member-specific
 facts** (eligibility, accumulators, prior auths, PCP assignment). At millions of
 members, **do not embed every member in the vector index**.
 
