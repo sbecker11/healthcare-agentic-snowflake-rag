@@ -1,4 +1,4 @@
-# Member Nav — Agentic RAG on LangGraph with Snowflake Cortex + MLOps
+# Member Benefits Assistant — Agentic RAG on LangGraph with Snowflake Cortex + MLOps
 
 A production-shaped portfolio project for **agentic AI engineering on
 Snowflake**: medallion-architecture semantic data assets (bronze → silver →
@@ -119,7 +119,7 @@ swaps in Snowflake's managed **Cortex Search** — hybrid vector + keyword searc
 
 ```mermaid
 flowchart LR
-    subgraph APP["Member Nav app (LangGraph)"]
+    subgraph APP["Member Benefits Assistant app (LangGraph)"]
         GNODE["retrieve node"] --> PROTO{{"Retriever protocol"}}
         PROTO -. "default / offline" .-> TFIDF["TfidfRetriever<br/>(scikit-learn cosine)"]
         PROTO == "production" ==> CORTEX["CortexRetriever<br/>adapter"]
