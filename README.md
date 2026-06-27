@@ -11,7 +11,7 @@ prior auth, telehealth, pharmacy) using **synthetic data only** — no real PHI.
 
 > **For role alignment:** see
 > [docs/agentic-ai-engineering-primer.md](docs/agentic-ai-engineering-primer.md)
-> for a Cambria Health Agentic AI Engineer requirements matrix.
+> for a Cambria Health Solutions Agentic AI Engineer requirements matrix.
 
 ```
 14 passed in tests/  •  TF-IDF default retriever  •  Cortex Search production adapter
@@ -32,7 +32,7 @@ Two things separate this from a "RAG demo":
 2. **The hyperparameters are searched, not guessed.** Retrieval `top_k`, the
    relevance threshold that triggers the rewrite loop, the loop budgets, and the
    prompt version are all tuned by an Optuna **TPE** sweep. The inner loop is the
-   graph executing at a *fixed* config; the outer loop searches the config space
+   graph executing at a _fixed_ config; the outer loop searches the config space
    — and every trial is tracked, gated, and (if it wins) promoted.
 
 ---
@@ -65,14 +65,14 @@ flowchart LR
 DDL ships in `snowflake/` (deploy in order — see
 [snowflake/README.md](snowflake/README.md)):
 
-| Script | Layer |
-|--------|-------|
-| `01_bronze.sql` | Raw policy feeds |
-| `02_silver.sql` | Cleansed `BENEFIT_POLICY` |
-| `03_gold.sql` | `MEMBER_KB` + `PLAN_COST_SHARING` |
-| `04_semantic_views.sql` | Semantic views for copay analytics |
-| `05_cortex_search.sql` | `MEMBER_KB_SEARCH` hybrid search |
-| `06_governance.sql` | Roles, masking, row access policies |
+| Script                  | Layer                               |
+| ----------------------- | ----------------------------------- |
+| `01_bronze.sql`         | Raw policy feeds                    |
+| `02_silver.sql`         | Cleansed `BENEFIT_POLICY`           |
+| `03_gold.sql`           | `MEMBER_KB` + `PLAN_COST_SHARING`   |
+| `04_semantic_views.sql` | Semantic views for copay analytics  |
+| `05_cortex_search.sql`  | `MEMBER_KB_SEARCH` hybrid search    |
+| `06_governance.sql`     | Roles, masking, row access policies |
 
 ---
 
@@ -218,7 +218,7 @@ flowchart TD
 
 After the sweep, the best config is **registered** (Staging) and run through the
 **promotion gate**: it must clear absolute floors (recall ≥ 0.75, accuracy ≥
-0.50) *and* beat the incumbent's composite before it's promoted to Production.
+0.50) _and_ beat the incumbent's composite before it's promoted to Production.
 
 ### Production monitoring (drift)
 
@@ -265,7 +265,7 @@ pytest -q
 
 ```
 snowflake/               Medallion DDL, semantic views, Cortex, governance
-docs/                    primer · scale / multi-tenant / performance design notes
+docs/                    agentic-ai-engineering-primer.md (role alignment)
 src/member_nav/
 ├── config.py            RagConfig dataclass + SEARCH_SPACE (the tunable surface)
 ├── llm.py               Claude client w/ deterministic offline mock fallback
@@ -295,34 +295,21 @@ tests/     test_pipeline.py (14 tests, offline)
 - **Gated promotion.** No config reaches Production without clearing metric floors.
 - **Governed access.** Illustrative roles, masking, and row policies in `06_governance.sql`.
 
-## Scale, multi-tenant, and performance
-
-This repo runs at **portfolio scale** (synthetic KB, single tenant, offline
-TF-IDF). Production health-plan workloads raise distinct design questions:
-millions of ICD/CPT/HCPCS codes, tenant isolation across plans and regions,
-millions of members (shared policy vs member-specific lookups), and latency/cost
-SLOs for retrieval and agent loops.
-
-See **[docs/scale-performance-multi-tenant.md](docs/scale-performance-multi-tenant.md)**
-for how to extend this architecture — structured code gold layers, Cortex
-attribute filters, row access policies, split retrievers/tools, and promotion
-gates that include latency — without conflating policy RAG with code-table search.
-
 ---
 
 ### Production swaps
 
-| Concern            | This repo (runs anywhere) | Production path                         |
-|--------------------|---------------------------|-----------------------------------------|
-| Retrieval          | TF‑IDF cosine             | Snowflake Cortex Search                 |
-| Reasoning LLM      | Offline mock / Claude     | Claude via `ANTHROPIC_API_KEY`          |
-| Experiment store   | Local SQLite MLflow       | MLflow Tracking Server / Databricks     |
-| Checkpointer       | SqliteSaver               | Postgres checkpointer                   |
-| Drift monitoring   | Offline PSI script        | Scheduled job → alerting                |
+| Concern          | This repo (runs anywhere) | Production path                     |
+| ---------------- | ------------------------- | ----------------------------------- |
+| Retrieval        | TF‑IDF cosine             | Snowflake Cortex Search             |
+| Reasoning LLM    | Offline mock / Claude     | Claude via `ANTHROPIC_API_KEY`      |
+| Experiment store | Local SQLite MLflow       | MLflow Tracking Server / Databricks |
+| Checkpointer     | SqliteSaver               | Postgres checkpointer               |
+| Drift monitoring | Offline PSI script        | Scheduled job → alerting            |
 
 ---
 
-*Built by Shawn Becker · Spexture (Independent Consulting) · Portfolio reference
+_Built by Shawn Becker · Spexture (Independent Consulting) · Portfolio reference
 for agentic AI engineering on Snowflake. Synthetic health-plan data only; the
 LangGraph control flow, medallion semantic assets, Cortex integration, HPO loop,
-and promotion gate are the transferable core.*
+and promotion gate are the transferable core._
