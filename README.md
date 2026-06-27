@@ -11,7 +11,7 @@ prior auth, telehealth, pharmacy) using **synthetic data only** — no real PHI.
 
 > **For role alignment:** see
 > [docs/agentic-ai-engineering-primer.md](docs/agentic-ai-engineering-primer.md)
-> for a Cambria Health Solutions Agentic AI Engineer requirements matrix.
+> for a Cambia Health Solutions Agentic AI Engineer requirements matrix.
 
 ```
 14 passed in tests/  •  TF-IDF default retriever  •  Cortex Search production adapter
