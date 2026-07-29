@@ -76,7 +76,7 @@ DDL ships in `snowflake/` (deploy in order — see
 
 ---
 
-## The agentic‑RAG workflow
+## The self-healing agentic-RAG workflow
 
 ```mermaid
 flowchart TD
