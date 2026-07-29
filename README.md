@@ -96,6 +96,11 @@ flowchart TD
     class GR,GA decision;
 ```
 
+Checkpointing is intentionally left off this diagram — each run is persisted with
+**SqliteSaver** (pause/resume + full state history); see
+[State, nodes, and durable persistence](#state-nodes-and-durable-persistence)
+below.
+
 A real trace (offline mock), showing a clean single pass:
 
 ```
