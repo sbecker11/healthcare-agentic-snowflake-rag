@@ -14,7 +14,7 @@ prior auth, telehealth, pharmacy) using **synthetic data only** — no real PHI.
 > for a Cambia Health Solutions Agentic AI Engineer requirements matrix.
 
 ```
-14 passed in tests/  •  TF-IDF default retriever  •  Cortex Search production adapter
+14 passed in tests/  •  TF‑IDF (term frequency–inverse document frequency) default retriever  •  Cortex Search production adapter
 ```
 
 ---
@@ -112,8 +112,13 @@ A: Certain services require prior authorization before care is rendered. These i
 ## How Snowflake Cortex cooperates
 
 Retrieval sits behind a `Retriever` protocol, so the graph is agnostic to the
-backend. The default `TfidfRetriever` runs locally; the `CortexRetriever`
-swaps in Snowflake's managed **Cortex Search** — hybrid vector + keyword search
+backend. The default `TfidfRetriever` runs locally using **TF‑IDF** (**T**erm
+**F**requency–**I**nverse **D**ocument **F**requency): **term frequency**
+scores how often a word appears in a document, and **inverse document
+frequency** down‑weights words that appear in many documents, so distinctive
+terms drive ranking. Documents are compared to the query with scikit‑learn
+cosine similarity over that TF‑IDF matrix. The `CortexRetriever` swaps in
+Snowflake's managed **Cortex Search** — hybrid vector + keyword search
 
 ### with semantic reranking — without changing a line of graph code.
 
@@ -121,14 +126,14 @@ swaps in Snowflake's managed **Cortex Search** — hybrid vector + keyword searc
 flowchart LR
     subgraph APP["Member Benefits Assistant app (LangGraph)"]
         GNODE["retrieve node"] --> PROTO{{"Retriever protocol"}}
-        PROTO -. "default / offline" .-> TFIDF["TfidfRetriever<br/>(scikit-learn cosine)"]
+        PROTO -. "default / offline" .-> TFIDF["TfidfRetriever<br/>(TF‑IDF + cosine)"]
         PROTO == "production" ==> CORTEX["CortexRetriever<br/>adapter"]
         TFIDF -- "RetrievedDoc[]" --> GNODE
         CORTEX -- "RetrievedDoc[]" --> GNODE
     end
 
     subgraph LOCAL["Local / offline (no Snowflake)"]
-        JSON[("knowledge_base.json")] --> MAT["TF-IDF matrix<br/>(fit at init)"]
+        JSON[("knowledge_base.json")] --> MAT["TF‑IDF matrix<br/>(term freq × IDF)"]
     end
 
     TFIDF -- "search(query, top_k)" --> MAT
@@ -290,7 +295,7 @@ tests/     test_pipeline.py (14 tests, offline)
 
 - **Medallion → Cortex → agent.** Bronze/silver/gold SQL feeds gold `MEMBER_KB`;
   Cortex Search indexes it; the LangGraph agent consumes via `CortexRetriever`.
-- **Backend‑neutral retrieval.** TF‑IDF ↔ Cortex Search are one-line swaps.
+- **Backend‑neutral retrieval.** Local TF‑IDF (term frequency–inverse document frequency) ↔ Cortex Search are one-line swaps.
 - **Offline‑first.** Deterministic mock LLM keeps CI reproducible without API keys.
 - **Gated promotion.** No config reaches Production without clearing metric floors.
 - **Governed access.** Illustrative roles, masking, and row policies in `06_governance.sql`.
@@ -301,7 +306,7 @@ tests/     test_pipeline.py (14 tests, offline)
 
 | Concern          | This repo (runs anywhere) | Production path                     |
 | ---------------- | ------------------------- | ----------------------------------- |
-| Retrieval        | TF‑IDF cosine             | Snowflake Cortex Search             |
+| Retrieval        | TF‑IDF cosine (term freq × IDF) | Snowflake Cortex Search             |
 | Reasoning LLM    | Offline mock / Claude     | Claude via `ANTHROPIC_API_KEY`      |
 | Experiment store | Local SQLite MLflow       | MLflow Tracking Server / Databricks |
 | Checkpointer     | SqliteSaver               | Postgres checkpointer               |
