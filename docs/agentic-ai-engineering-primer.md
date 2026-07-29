@@ -78,7 +78,33 @@ tuned by Optuna, tracked in MLflow, and promoted through a quality gate.
 | Track | MLflow (`member-benefits-assistant-rag` experiment) | Audit params and metrics per trial |
 | Gate | `passes_gate()` | Floors: recall ≥ 0.75, accuracy ≥ 0.50; beat incumbent |
 | Register | `ConfigRegistry` | Versioned Staging → Production promotion |
-| Monitor | PSI on retrieval top-scores | Flag distribution drift without code changes |
+| Monitor | PSI on retrieval scores | Detect distribution drift post-deploy |
+
+**HPO** (hyperparameter optimization) is that Search → Track → Gate → Register
+outer loop. **TPE** (Tree-structured Parzen Estimator) is the Optuna sampler
+driving Search — see below.
+
+## TPE vs Simplex
+
+**Simplex search** here means **Nelder–Mead** (downhill simplex): a local,
+derivative-free optimizer that moves a simplex of \(n+1\) points in \(n\)
+dimensions via reflect / expand / contract / shrink until it settles near a
+nearby minimum.
+
+| | Nelder–Mead (simplex) | Optuna TPE (this repo) |
+|--|----------------------|-------------------------|
+| Scope | Local from a start point | Global-ish coverage of the search space |
+| Mechanism | Geometry of the simplex | Probabilistic “good vs bad” regions from past trials |
+| Parameter types | Best for continuous, smooth-ish objectives | Strong on mixed / discrete / conditional spaces (`top_k`, loop budgets, prompt version) |
+| Expensive trials | Can spend steps in poor local basins | Built for costly black-box evals (sample → full eval → update) |
+| Global optimum | Not guaranteed | Not guaranteed — better coverage via exploration/exploitation |
+
+For this project's RAG HPO — integer `top_k`, thresholds, rewrite/regen budgets,
+optional categorical prompt versions, each trial = full eval set — **TPE is the
+better default**. Nelder–Mead is a better fit when the space is mostly continuous
+and a good starting region is already known (local polish). They can be combined
+(TPE or random to find a basin, then local refine); this repo uses TPE alone for
+the outer sweep (`src/member_benefits_assistant/mlops/tuning.py`).
 
 ## Governance model
 

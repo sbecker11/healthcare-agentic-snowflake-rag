@@ -206,6 +206,19 @@ resume and its full state history is recoverable from disk.
 
 ## The MLOps + HPO lifecycle
 
+**HPO** (**H**yper**p**arameter **O**ptimization) is the outer loop that searches
+RAG settings (`top_k`, relevance threshold, rewrite/regen budgets, prompt version)
+instead of hand-picking them. Each trial fixes a `RagConfig`, runs the agentic
+graph over the eval set (the inner loop), scores metrics, and feeds the result
+back into the sampler.
+
+**TPE** (**T**ree-structured **P**arzen **E**stimator) is Optuna's Bayesian
+sampler: it models which regions of the search space look promising vs poor from
+past trials, then proposes the next config where improvement is more likely.
+See [TPE vs Simplex](docs/agentic-ai-engineering-primer.md#tpe-vs-simplex) in the
+primer for why TPE fits this mixed discrete/categorical RAG search space better
+than local Nelder–Mead simplex search.
+
 ```mermaid
 flowchart TD
     SPACE["SEARCH_SPACE<br/>(top_k, threshold, rewrites,<br/>regens, overlap, prompt)"] --> SAMP["Optuna TPE<br/>sampler"]
