@@ -184,6 +184,17 @@ The agent workflow becomes **retrieve shared policy** + **lookup member context*
 | Agent graph | Rewrite + regen loops | `max_rewrites`, `max_regenerations` (HPO-tuned) |
 | LLM generation | Token count | Cap context docs; summarize long policy text in silver |
 
+**Index lag** is how far behind the live gold table (`MEMBER_KB`) the searchable
+Cortex index is — the delay between a row changing in gold and that change being
+queryable via `MEMBER_KB_SEARCH`. High lag means retrieval can miss or under-rank
+fresh policy text even when the warehouse is fast.
+
+**`TARGET_LAG`** is the Cortex Search service setting that declares the *desired*
+maximum freshness for that index (this repo uses `'1 hour'` in
+`snowflake/05_cortex_search.sql`). Snowflake refreshes the service aiming to keep
+observed lag within that target; tighten it for fresher retrieval (more compute),
+or loosen it to cut refresh cost when hourly staleness is acceptable.
+
 The graph's **bounded loops** are intentional latency guards: worst case is
 `(1 + max_rewrites) × retrieve + (1 + max_regenerations) × generate`.
 
