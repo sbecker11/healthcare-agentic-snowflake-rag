@@ -48,7 +48,7 @@ flowchart LR
         BP["BENEFIT_POLICY"]
     end
     subgraph GOLD["Gold"]
-        KB["MEMBER_KB"]
+        KB["MEMBER_KB<br/>(Member Knowledge Base)"]
         PCS["PLAN_COST_SHARING"]
     end
     subgraph SEM["Semantic"]
@@ -62,6 +62,9 @@ flowchart LR
     PCS --> SV
 ```
 
+`MEMBER_KB` is the **Member Knowledge Base** — curated, agent-ready member-benefits
+documents in the gold layer (indexed by Cortex Search as `MEMBER_KB_SEARCH`).
+
 DDL ships in `snowflake/` (deploy in order — see
 [snowflake/README.md](snowflake/README.md)):
 
@@ -69,7 +72,7 @@ DDL ships in `snowflake/` (deploy in order — see
 | ----------------------- | ----------------------------------- |
 | `01_bronze.sql`         | Raw policy feeds                    |
 | `02_silver.sql`         | Cleansed `BENEFIT_POLICY`           |
-| `03_gold.sql`           | `MEMBER_KB` + `PLAN_COST_SHARING`   |
+| `03_gold.sql`           | `MEMBER_KB` (Member Knowledge Base) + `PLAN_COST_SHARING` |
 | `04_semantic_views.sql` | Semantic views for copay analytics  |
 | `05_cortex_search.sql`  | `MEMBER_KB_SEARCH` hybrid search    |
 | `06_governance.sql`     | Roles, masking, row access policies |
