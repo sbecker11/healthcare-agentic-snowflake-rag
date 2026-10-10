@@ -1,5 +1,7 @@
 # Member Benefits Assistant — Agentic RAG on LangGraph with Snowflake Cortex + MLOps
 
+<a href="https://raw.githubusercontent.com/sbecker11/healthcare-agentic-snowflake-rag/main/docs/architecture.png" target="_blank" rel="noopener noreferrer"><img src="docs/architecture-icon.png" width="420" height="420" alt="healthcare-agentic-snowflake-rag architecture (click for the full diagram)"></a>
+
 A production-shaped portfolio project for **agentic AI engineering on
 Snowflake**: medallion-architecture semantic data assets (bronze → silver →
 gold), **Cortex Search** for hybrid retrieval, **semantic views** for trusted
