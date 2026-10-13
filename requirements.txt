@@ -2,6 +2,7 @@
 langgraph>=1.0
 langgraph-checkpoint-sqlite>=2.0
 langchain-core>=1.0
+packaging>=23.2
 
 # LLM (optional at runtime; offline mock used when ANTHROPIC_API_KEY is unset)
 langchain-anthropic>=1.0
