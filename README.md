@@ -1,5 +1,11 @@
 # Member Benefits Assistant — Agentic RAG on LangGraph with Snowflake Cortex + MLOps
 
+<!-- SUMMARY:START generated from workspace-linkedin-profile/Projects.json by scripts/build_readme_header.py; edit there -->
+LangGraph corrective RAG on Snowflake Cortex Search with MLflow, Optuna TPE hyperparameter tuning, and PSI drift monitoring.
+
+**Skills:** LangGraph · Corrective RAG · Retrieval-Augmented Generation (RAG) · Snowflake · Snowflake Cortex Search · MLflow · Optuna · Hyperparameter Optimization · PSI Drift Monitoring · MLOps · Anthropic Claude API · Python (Programming Language) · SQLite · pytest · Automated Software Testing (JUnit/Jest/Vitest/PyTest)
+<!-- SUMMARY:END -->
+
 <a href="https://raw.githubusercontent.com/sbecker11/healthcare-agentic-snowflake-rag/main/docs/architecture.png" target="_blank" rel="noopener noreferrer"><img src="docs/architecture-icon.png" width="420" height="420" alt="healthcare-agentic-snowflake-rag architecture (click for the full diagram)"></a>
 
 A production-shaped portfolio project for **agentic AI engineering on
